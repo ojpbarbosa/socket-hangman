@@ -12,7 +12,5 @@ public class Servidor {
 
     if (args.length == 1)
       porta = args[0];
-    
-
   } 
 }
