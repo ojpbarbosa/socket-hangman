@@ -63,72 +63,93 @@ public class Cliente {
     } catch (Exception erro) {
     } // sei que servidor foi instanciado
 
+    try
+		{
+			System.out.println("Conectado! \n");
+			System.out.println("Aguardando um oponente...");
+			ComunicadoComecar podeIr = (ComunicadoComecar)servidor.envie();
+		}
+		catch(Exception e)
+		{}
+
     tratadoraDeComunicadoDeDesligamento.start();
 
     char continuar = ' ';
 
     do {
-      Palavra palavraSorteada = BancoDePalavras.getPalavraSorteada();
+    //   Palavra palavraSorteada = BancoDePalavras.getPalavraSorteada();
 
-      Tracinhos tracinhos = null;
-      try {
-        tracinhos = new Tracinhos(palavraSorteada.getTamanho());
-      } catch (Exception erro) {
+    //   Tracinhos tracinhos = null;
+    //   try {
+    //     tracinhos = new Tracinhos(palavraSorteada.getTamanho());
+    //   } catch (Exception erro) {
+    //   }
+
+    //   ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = new ControladorDeLetrasJaDigitadas();
+
+    //   ControladorDeErros controladorDeErros = null;
+    //   try {
+    //     controladorDeErros = new ControladorDeErros((int) (palavraSorteada.getTamanho() * 0.6));
+    //   } catch (Exception erro) {
+    //   }
+
+    //   while (tracinhos.isAindaComTracinhos() && !controladorDeErros.isAtingidoMaximoDeErros()) {
+    //     System.out.println("Palavra...: " + tracinhos);
+    //     System.out.println("Digitadas.: " + controladorDeLetrasJaDigitadas);
+    //     System.out.println("Erros.....: " + controladorDeErros);
+
+      // Pegar a palavra sorteada do servidor
+      servidor.receba(new PedidoDePalavra());
+      Comunicado comunicado = null; 
+      do {
+        comunicado = (Comunicado)servidor.espie();
       }
+      while (!(comunicado instanceof Palavra));
+      Palavra palavraSorteada = (Palavra)servidor.envie();
 
-      ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = new ControladorDeLetrasJaDigitadas();
 
-      ControladorDeErros controladorDeErros = null;
       try {
-        controladorDeErros = new ControladorDeErros((int) (palavraSorteada.getTamanho() * 0.6));
-      } catch (Exception erro) {
-      }
+        System.out.println("Sua vez de jogar, o que deseja fazer: adivinhar a palavra do jogo [1] ou digitar uma letra [2]");
+        System.out.print("Escolha um número: ");
+        int opcao = Teclado.getUmInt();
 
-      while (tracinhos.isAindaComTracinhos() && !controladorDeErros.isAtingidoMaximoDeErros()) {
-        System.out.println("Palavra...: " + tracinhos);
-        System.out.println("Digitadas.: " + controladorDeLetrasJaDigitadas);
-        System.out.println("Erros.....: " + controladorDeErros);
+        if (opcao == 1) {
+          System.out.print("Qual é a palavra ? ");
+          Palavra palavraAdivinhada = new Palavra(Teclado.getUmString().toUpperCase());
 
-        try {
-          System.out.println("Sua vez de jogar, o que deseja fazer: adivinhar a palavra do jogo [1] ou digitar uma letra [2]");
-          System.out.print("Escolha um número: ");
-          int opcao = Teclado.getUmInt();
+          if (palavraSorteada.compareTo(palavraAdivinhada) == 0){
+            System.out.println();
+          }
+        }
+        else if (opcao == 2) {
+          System.out.print("Qual letra? ");
+          char letra = Character.toUpperCase(Teclado.getUmChar());
 
-          if (opcao == 1) {
-            System.out.print("Qual é a palavra ? ");
-            Palavra palavraAdivinhada = new Palavra(Teclado.getUmString().toUpperCase());
+          if (controladorDeLetrasJaDigitadas.isJaDigitada(letra))
+            System.err.println("Essa letra ja foi digitada!\n");
+          else {
+            // controladorDeLetrasJaDigitadas.registre(letra);
+            servidor.receba(new PedidoDeRegistramentoDeLetra(letra));
 
-            if (palavraSorteada.compareTo(palavraAdivinhada) == 0){
+            int qtd = palavraSorteada.getQuantidade(letra);
+
+            if (qtd == 0) {
+              System.err.println("A palavra nao tem essa letra!\n");
+              // controladorDeErros.registreUmErro();
+              servidor.receba(new PedidoDeRegistroDeErro());
+            } else {
+              for (int i = 0; i < qtd; i++) {
+                int posicao = palavraSorteada.getPosicaoDaIezimaOcorrencia(i, letra);
+                // tracinhos.revele(posicao, letra);
+                servidor.receba(new PedidoDeRevelacao(posicao, letra));
+              }
               System.out.println();
             }
           }
-          else if (opcao == 2) {
-            System.out.print("Qual letra? ");
-            char letra = Character.toUpperCase(Teclado.getUmChar());
-  
-            if (controladorDeLetrasJaDigitadas.isJaDigitada(letra))
-              System.err.println("Essa letra ja foi digitada!\n");
-            else {
-              controladorDeLetrasJaDigitadas.registre(letra);
-  
-              int qtd = palavraSorteada.getQuantidade(letra);
-  
-              if (qtd == 0) {
-                System.err.println("A palavra nao tem essa letra!\n");
-                controladorDeErros.registreUmErro();
-              } else {
-                for (int i = 0; i < qtd; i++) {
-                  int posicao = palavraSorteada.getPosicaoDaIezimaOcorrencia(i, letra);
-                  tracinhos.revele(posicao, letra);
-                }
-                System.out.println();
-              }
-            }
-          }
-
-        } catch (Exception erro) {
-          System.err.println(erro.getMessage());
         }
+
+      } catch (Exception erro) {
+        System.err.println(erro.getMessage());
       }
 
       if (controladorDeErros.isAtingidoMaximoDeErros())
@@ -148,6 +169,15 @@ public class Cliente {
           System.err.println("Opcao invalida! Tente novamente...");
         }
       }
-    } while (continuar == 'S');
+    }
+    while(continuar=='S');
+
+    try {
+      servidor.receba(new PedidoParaSair());
+    } catch (Exception erro)
+    {}
+  
+    System.out.println("Obrigado por jogar!");
+    System.exit(0);
   }
 }
