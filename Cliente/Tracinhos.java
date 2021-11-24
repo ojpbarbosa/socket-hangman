@@ -1,5 +1,3 @@
-package com.company;
-
 public class Tracinhos implements Cloneable
 {
     private char texto [];

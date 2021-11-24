@@ -1,6 +1,5 @@
-package com.company;
 
-public class Palavra implements Comparable<Palavra>
+public class Palavra extends Comunicado implements Comparable<Palavra>
 {
     private String texto;
 

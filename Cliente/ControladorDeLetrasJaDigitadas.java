@@ -1,5 +1,3 @@
-package com.company;
-
 public class ControladorDeLetrasJaDigitadas implements Cloneable {
     private String letrasJaDigitadas;
 
