@@ -1,4 +1,4 @@
-public class PedidoDeRegistramentoDeLetra {
+public class PedidoDeRegistramentoDeLetra extends Comunicado {
   private char letra;
   
   public PedidoDeRegistramentoDeLetra(char letra) {

@@ -1,5 +1,3 @@
-package com.company;
-
 import java.net.*;
 import java.util.concurrent.ExecutionException;
 import java.io.*;
@@ -125,7 +123,18 @@ public class Cliente {
           System.out.print("Qual letra? ");
           char letra = Character.toUpperCase(Teclado.getUmChar());
 
-          if (controladorDeLetrasJaDigitadas.isJaDigitada(letra))
+          // if (controladorDeLetrasJaDigitadas.isJaDigitada(letra))
+          // Verifica se uma letra já foi digitada
+          servidor.receba(new PedidoDeLetraJaDigitada(letra));
+          comunicado = null; 
+          do {
+            comunicado = (Comunicado)servidor.espie();
+          }
+          while (!(comunicado instanceof PedidoDeLetraJaDigitada));
+          PedidoDeLetraJaDigitada pdjd = (PedidoDeLetraJaDigitada)servidor.envie();
+          boolean isJaDigitada = pdjd.getIsJaDigitada();
+
+          if (isJaDigitada)
             System.err.println("Essa letra ja foi digitada!\n");
           else {
             // controladorDeLetrasJaDigitadas.registre(letra);
@@ -152,7 +161,17 @@ public class Cliente {
         System.err.println(erro.getMessage());
       }
 
-      if (controladorDeErros.isAtingidoMaximoDeErros())
+      // if (controladorDeErros.isAtingidoMaximoDeErros())
+      servidor.receba(new PedidoDeMaximoDeErros());
+      comunicado = null; 
+      do {
+        comunicado = (Comunicado)servidor.espie();
+      }
+      while (!(comunicado instanceof PedidoDeMaximoDeErros));
+      PedidoDeMaximoDeErros pme = (PedidoDeMaximoDeErros)servidor.envie();
+      boolean isAtingidoMaximoDeErros = pme.getIsAtingidoMaximoDeErross();
+
+      if (isAtingidoMaximoDeErros)
         System.out.println("Que pena! Voce perdeu! A palavra era " + palavraSorteada + "\n");
       else // !tracinhos.isAindaComTracinhos()
         System.out.println("Parabens! Voce ganhou! A palavra era mesmo " + palavraSorteada + "\n");
