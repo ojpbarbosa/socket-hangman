@@ -26,7 +26,7 @@ public class AceitadoraDeConexao extends Thread {
       Socket conexao = null;
       try {
         conexao = this.pedido.accept();
-        System.out.println("Jogador conectado!");
+        System.out.print("\n- Jogador conectado!\n> ");
       } catch (Exception e) {
         continue;
       }
