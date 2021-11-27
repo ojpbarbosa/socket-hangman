@@ -1,69 +1,66 @@
+public class ControladorDeErros implements Cloneable {
+    private int qtdMax, qtdErr = 0;
 
-public class ControladorDeErros implements Cloneable
-{
-    private int qtdMax, qtdErr=0;
-
-    public ControladorDeErros (int qtdMax) throws Exception
-    {
+    public ControladorDeErros(int qtdMax) throws Exception {
         if (qtdMax < 1)
             throw new Exception("A quantidade máxima de erros precisa ser positiva");
-        
+
         this.qtdMax = qtdMax;
     }
 
-    public void registreUmErro () throws Exception
-    {
+    public void registreUmErro() throws Exception {
         if (this.qtdErr == this.qtdMax)
             throw new Exception("A quantidade de erros já atingiu o limite");
 
         this.qtdErr++;
     }
 
-    public boolean isAtingidoMaximoDeErros  ()
-    {
+    public boolean isAtingidoMaximoDeErros() {
         if (this.qtdErr == this.qtdMax)
             return true;
-        
+
         return false;
     }
 
     @Override
-    public String toString ()
-    {
+    public String toString() {
         return this.qtdErr + "/" + this.qtdMax;
     }
 
     @Override
-    public boolean equals (Object obj)
-    {
-        if (this == obj) return true;
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
 
-        if (obj == null) return false;
+        if (obj == null)
+            return false;
 
-        if (obj.getClass() != ControladorDeErros.class) return false;
+        if (obj.getClass() != ControladorDeErros.class)
+            return false;
 
-        ControladorDeErros cntrlErros = (ControladorDeErros)obj;
-        if (this.qtdMax != cntrlErros.qtdMax) return false;
-        if (this.qtdErr != cntrlErros.qtdErr) return false;
+        ControladorDeErros cntrlErros = (ControladorDeErros) obj;
+        if (this.qtdMax != cntrlErros.qtdMax)
+            return false;
+        if (this.qtdErr != cntrlErros.qtdErr)
+            return false;
 
         return true;
     }
 
     @Override
-    public int hashCode ()
-    {
+    public int hashCode() {
         int ret = 666;
 
         ret = 11 * ret + new Integer(this.qtdErr).hashCode();
         ret = 11 * ret + new Integer(this.qtdMax).hashCode();
 
-        if (ret < 0) ret = -ret;
+        if (ret < 0)
+            ret = -ret;
 
         return ret;
     }
 
-    public ControladorDeErros (ControladorDeErros c) throws Exception 
-    {
+    public ControladorDeErros(ControladorDeErros c) throws Exception {
         if (c == null)
             throw new Exception("Modelo ausente");
         this.qtdErr = c.qtdErr;
@@ -71,16 +68,13 @@ public class ControladorDeErros implements Cloneable
     }
 
     @Override
-    public Object clone ()
-    {
+    public Object clone() {
         ControladorDeErros ret = null;
 
-        try 
-        {
+        try {
             ret = new ControladorDeErros(this);
-        }
-        catch (Exception erro)
-        {} // Ignorando Exception
+        } catch (Exception erro) {
+        } // Ignorando Exception
 
         return ret;
     }

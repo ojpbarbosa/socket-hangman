@@ -1,6 +1,6 @@
-import java.net.*;
-import java.util.concurrent.ExecutionException;
 import java.io.*;
+import java.util.*;
+import java.net.*;
 
 public class Cliente {
   public static final String HOST_PADRAO = "localhost";
@@ -23,6 +23,8 @@ public class Cliente {
 
       if (args.length == 2)
         porta = Integer.parseInt(args[1]);
+
+      conexao = new Socket(host, porta);
     } catch (Exception erro) {
       System.err.println("Indique o servidor e a porta corretos!\n");
       return;
@@ -61,53 +63,62 @@ public class Cliente {
     } catch (Exception erro) {
     } // sei que servidor foi instanciado
 
-    try
-		{
-			System.out.println("Conectado! \n");
-			System.out.println("Aguardando um oponente...");
-			ComunicadoComecar podeIr = (ComunicadoComecar)servidor.envie();
-		}
-		catch(Exception e)
-		{}
+    try {
+      try {
+        File logo = new File("../logo.txt");
+        Scanner scanner = new Scanner(logo);
+        while (scanner.hasNextLine())
+          System.out.println(scanner.nextLine());
+        scanner.close();
+      } catch (Exception erro) {
+      }
+
+      System.out.println("\nConectado!\n");
+      System.out.println("Aguardando um oponente...");
+      ComunicadoComecar podeIr = (ComunicadoComecar) servidor.envie();
+    } catch (Exception e) {
+    }
 
     tratadoraDeComunicadoDeDesligamento.start();
 
     char continuar = ' ';
 
     do {
-    //   Palavra palavraSorteada = BancoDePalavras.getPalavraSorteada();
+      // Palavra palavraSorteada = BancoDePalavras.getPalavraSorteada();
 
-    //   Tracinhos tracinhos = null;
-    //   try {
-    //     tracinhos = new Tracinhos(palavraSorteada.getTamanho());
-    //   } catch (Exception erro) {
-    //   }
+      // Tracinhos tracinhos = null;
+      // try {
+      // tracinhos = new Tracinhos(palavraSorteada.getTamanho());
+      // } catch (Exception erro) {
+      // }
 
-    //   ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = new ControladorDeLetrasJaDigitadas();
+      // ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = new
+      // ControladorDeLetrasJaDigitadas();
 
-    //   ControladorDeErros controladorDeErros = null;
-    //   try {
-    //     controladorDeErros = new ControladorDeErros((int) (palavraSorteada.getTamanho() * 0.6));
-    //   } catch (Exception erro) {
-    //   }
+      // ControladorDeErros controladorDeErros = null;
+      // try {
+      // controladorDeErros = new ControladorDeErros((int)
+      // (palavraSorteada.getTamanho() * 0.6));
+      // } catch (Exception erro) {
+      // }
 
-    //   while (tracinhos.isAindaComTracinhos() && !controladorDeErros.isAtingidoMaximoDeErros()) {
-    //     System.out.println("Palavra...: " + tracinhos);
-    //     System.out.println("Digitadas.: " + controladorDeLetrasJaDigitadas);
-    //     System.out.println("Erros.....: " + controladorDeErros);
+      // while (tracinhos.isAindaComTracinhos() &&
+      // !controladorDeErros.isAtingidoMaximoDeErros()) {
+      // System.out.println("Palavra...: " + tracinhos);
+      // System.out.println("Digitadas.: " + controladorDeLetrasJaDigitadas);
+      // System.out.println("Erros.....: " + controladorDeErros);
 
       // Pegar a palavra sorteada do servidor
       servidor.receba(new PedidoDePalavra());
-      Comunicado comunicado = null; 
+      Comunicado comunicado = null;
       do {
-        comunicado = (Comunicado)servidor.espie();
-      }
-      while (!(comunicado instanceof Palavra));
-      Palavra palavraSorteada = (Palavra)servidor.envie();
-
+        comunicado = (Comunicado) servidor.espie();
+      } while (!(comunicado instanceof Palavra));
+      Palavra palavraSorteada = (Palavra) servidor.envie();
 
       try {
-        System.out.println("Sua vez de jogar, o que deseja fazer: adivinhar a palavra do jogo [1] ou digitar uma letra [2]");
+        System.out
+            .println("Sua vez de jogar, o que deseja fazer: adivinhar a palavra do jogo [1] ou digitar uma letra [2]");
         System.out.print("Escolha um número: ");
         int opcao = Teclado.getUmInt();
 
@@ -115,23 +126,21 @@ public class Cliente {
           System.out.print("Qual é a palavra ? ");
           Palavra palavraAdivinhada = new Palavra(Teclado.getUmString().toUpperCase());
 
-          if (palavraSorteada.compareTo(palavraAdivinhada) == 0){
+          if (palavraSorteada.compareTo(palavraAdivinhada) == 0) {
             System.out.println();
           }
-        }
-        else if (opcao == 2) {
+        } else if (opcao == 2) {
           System.out.print("Qual letra? ");
           char letra = Character.toUpperCase(Teclado.getUmChar());
 
           // if (controladorDeLetrasJaDigitadas.isJaDigitada(letra))
           // Verifica se uma letra já foi digitada
           servidor.receba(new PedidoDeLetraJaDigitada(letra));
-          comunicado = null; 
+          comunicado = null;
           do {
-            comunicado = (Comunicado)servidor.espie();
-          }
-          while (!(comunicado instanceof PedidoDeLetraJaDigitada));
-          PedidoDeLetraJaDigitada pdjd = (PedidoDeLetraJaDigitada)servidor.envie();
+            comunicado = (Comunicado) servidor.espie();
+          } while (!(comunicado instanceof PedidoDeLetraJaDigitada));
+          PedidoDeLetraJaDigitada pdjd = (PedidoDeLetraJaDigitada) servidor.envie();
           boolean isJaDigitada = pdjd.getIsJaDigitada();
 
           if (isJaDigitada)
@@ -163,12 +172,11 @@ public class Cliente {
 
       // if (controladorDeErros.isAtingidoMaximoDeErros())
       servidor.receba(new PedidoDeMaximoDeErros());
-      comunicado = null; 
+      comunicado = null;
       do {
-        comunicado = (Comunicado)servidor.espie();
-      }
-      while (!(comunicado instanceof PedidoDeMaximoDeErros));
-      PedidoDeMaximoDeErros pme = (PedidoDeMaximoDeErros)servidor.envie();
+        comunicado = (Comunicado) servidor.espie();
+      } while (!(comunicado instanceof PedidoDeMaximoDeErros));
+      PedidoDeMaximoDeErros pme = (PedidoDeMaximoDeErros) servidor.envie();
       boolean isAtingidoMaximoDeErros = pme.getIsAtingidoMaximoDeErross();
 
       if (isAtingidoMaximoDeErros)
@@ -188,14 +196,13 @@ public class Cliente {
           System.err.println("Opcao invalida! Tente novamente...");
         }
       }
-    }
-    while(continuar=='S');
+    } while (continuar == 'S');
 
     try {
       servidor.receba(new PedidoParaSair());
-    } catch (Exception erro)
-    {}
-  
+    } catch (Exception erro) {
+    }
+
     System.out.println("Obrigado por jogar!");
     System.exit(0);
   }
