@@ -6,6 +6,10 @@ public class SupervisoraDeConexao extends Thread {
   private Parceiro jogador;
   private Socket conexao;
   private ArrayList<Parceiro> jogadores;
+  private static Palavra palavraSorteada;
+  private static int qtdJogadores = 0;
+  private static int qtdJogadoresProntos = 0;
+  private static boolean jaPediuPalavra = false;
 
   public SupervisoraDeConexao(Socket conexao, ArrayList<Parceiro> jogadores) throws Exception {
     if (conexao == null)
@@ -22,14 +26,14 @@ public class SupervisoraDeConexao extends Thread {
     ObjectOutputStream transmissor;
     try {
       transmissor = new ObjectOutputStream(this.conexao.getOutputStream());
-    } catch (Exception e) {
+    } catch (Exception erro) {
       return;
     }
 
     ObjectInputStream receptor = null;
     try {
       receptor = new ObjectInputStream(this.conexao.getInputStream());
-    } catch (Exception e) {
+    } catch (Exception erro) {
       try {
         transmissor.close();
       } catch (Exception falha) {
@@ -40,12 +44,34 @@ public class SupervisoraDeConexao extends Thread {
 
     try {
       this.jogador = new Parceiro(this.conexao, receptor, transmissor);
-    } catch (Exception e) {
+    } catch (Exception erro) {
     }
 
     try {
+      Tracinhos tracinhos = null;
+      ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = null;
+      ControladorDeErros controladorDeErros = null;
+
       synchronized (this.jogadores) {
         this.jogadores.add(this.jogador);
+        this.qtdJogadores++;
+
+        if (this.qtdJogadores == 3) {
+          for (Parceiro jogador : this.jogadores) {
+            jogador.receba(new ComunicadoComecar());
+          }
+
+          try {
+            this.palavraSorteada = BancoDePalavras.getPalavraSorteada();
+
+            tracinhos = new Tracinhos(this.palavraSorteada.getTamanho());
+
+            controladorDeLetrasJaDigitadas = new ControladorDeLetrasJaDigitadas();
+
+            controladorDeErros = new ControladorDeErros((int) (this.palavraSorteada.getTamanho() * 0.6));
+          } catch (Exception erro) {
+          }
+        }
       }
 
       for (;;) {
@@ -53,18 +79,32 @@ public class SupervisoraDeConexao extends Thread {
 
         if (comunicado == null)
           return;
-        else if (comunicado instanceof PedidoDeLetraJaDigitada) {
-          // TODO
+        else if (comunicado instanceof PedidoDeNome) {
+          String nome = ((PedidoDeNome) comunicado).getNome();
+          this.jogador.setNome(nome);
+        } else if (comunicado instanceof PedidoDeLetraJaDigitada) {
+          char letraJaDigitada = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
+
+          controladorDeLetrasJaDigitadas.registre(letraJaDigitada);
         } else if (comunicado instanceof PedidoDeMaximoDeErros) {
-          // TODO
+          boolean isAtingiuMaximoDeErros = controladorDeErros.isAtingidoMaximoDeErros();
+          PedidoDeMaximoDeErros pedidoDeMaximoDeErros = new PedidoDeMaximoDeErros(isAtingiuMaximoDeErros);
+
+          this.jogador.receba(pedidoDeMaximoDeErros);
         } else if (comunicado instanceof PedidoDePalavra) {
-          // TODO
+          this.jogador.receba(this.palavraSorteada);
+          System.out.println(palavraSorteada);
         } else if (comunicado instanceof PedidoDeRegistramentoDeLetra) {
-          // TODO
+          char letraParaRegistrar = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
+
+          controladorDeLetrasJaDigitadas.registre(letraParaRegistrar);
         } else if (comunicado instanceof PedidoDeRegistroDeErro) {
-          // TODO
+          controladorDeErros.registreUmErro();
         } else if (comunicado instanceof PedidoDeRevelacao) {
-          // TODO
+          int posicaoParaRevelar = ((PedidoDeRevelacao) comunicado).getPosicao();
+          char letraParaRevelar = ((PedidoDeRevelacao) comunicado).getLetra();
+
+          tracinhos.revele(posicaoParaRevelar, letraParaRevelar);
         } else if (comunicado instanceof PedidoParaSair) {
           synchronized (this.jogadores) {
             this.jogadores.remove(this.jogador);
@@ -72,7 +112,7 @@ public class SupervisoraDeConexao extends Thread {
           this.jogador.adeus();
         }
       }
-    } catch (Exception e) {
+    } catch (Exception erro) {
       try {
         transmissor.close();
         receptor.close();

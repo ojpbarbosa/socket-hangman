@@ -1,32 +1,25 @@
-package com.company;
+public class TratadoraDeComunicadoDeDesligamento extends Thread {
+  private Parceiro servidor;
 
-import java.net.*;
+  public TratadoraDeComunicadoDeDesligamento(Parceiro servidor) throws Exception {
+    if (servidor == null)
+      throw new Exception("Servidor ausente");
 
-public class TratadoraDeComunicadoDeDesligamento extends Thread
-{
-    private Parceiro servidor;
+    this.servidor = servidor;
+  }
 
-    public TratadoraDeComunicadoDeDesligamento (Parceiro servidor) throws Exception
-    {
-        if (servidor==null)
-            throw new Exception ("Porta invalida");
-
-        this.servidor = servidor;
-    }
-
-    public void run ()
-    {
-        for(;;)
-        {
-          try {
-            if (this.servidor.espie() instanceof ComunicadoDeDesligamento) {
-              System.out.println ("\nO servidor vai ser desligado agora;");
-              System.err.println ("volte mais tarde!\n");
-              System.exit(0);
-            }
-          }
-          catch (Exception erro)
-          {}
+  public void run() {
+    for (;;) {
+      System.out.println("Tratadora rodando");
+      try {
+        if (this.servidor.espie() instanceof ComunicadoDeDesligamento) {
+          System.out.println("\nO servidor vai ser desligado agora;");
+          System.out.println("volte mais tarde!\n");
+          System.exit(0);
         }
+      } catch (Exception erro) {
+        System.err.println(erro.getMessage());
+      }
     }
+  }
 }

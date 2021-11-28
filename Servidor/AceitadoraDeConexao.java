@@ -11,7 +11,7 @@ public class AceitadoraDeConexao extends Thread {
 
     try {
       this.pedido = new ServerSocket(Integer.parseInt(porta));
-    } catch (Exception e) {
+    } catch (Exception erro) {
       throw new Exception("Porta invalida");
     }
 
@@ -22,21 +22,23 @@ public class AceitadoraDeConexao extends Thread {
   }
 
   public void run() {
+
     for (;;) {
       Socket conexao = null;
       try {
         conexao = this.pedido.accept();
         System.out.print("\n- Jogador conectado!\n> ");
-      } catch (Exception e) {
+      } catch (Exception erro) {
         continue;
       }
 
       SupervisoraDeConexao supervisoraDeConexao = null;
       try {
         supervisoraDeConexao = new SupervisoraDeConexao(conexao, jogadores);
-      } catch (Exception e) {
+      } catch (Exception erro) {
       }
       supervisoraDeConexao.start();
+
     }
   }
 }
