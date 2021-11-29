@@ -1,7 +1,7 @@
-public class PedidoDeTracinhos {
+public class PedidoDeTracinhos extends Comunicado {
   private String tracinhos; 
 
-  public PedidoDeTracinhos(String tracinhos) {
+  public void setTracinhos(String tracinhos) {
     this.tracinhos = tracinhos;
   }
 
