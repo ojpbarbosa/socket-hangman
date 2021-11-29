@@ -81,25 +81,31 @@ public class Cliente {
       System.out.println("Aguardando outros 2 adversários...");
       Comunicado comunicado = null;
       do {
-        comunicado = (Comunicado) servidor.espie();
+        comunicado = (Comunicado) servidor.envie();
       } while (!(comunicado instanceof ComunicadoComecar));
       // Junto com o comunicadoComecar vem os dados do jogo atual
-      dadosDaForca = (ComunicadoComecar) servidor.envie();
+      dadosDaForca = (ComunicadoComecar) comunicado;
 
     } catch (Exception erro) {
+      System.err.println(erro.getMessage());
     }
+
+    servidor.receba(new PedidoAtualizarDados(dadosDaForca.getPalavra(), dadosDaForca.getTracinhos(),
+        dadosDaForca.getControladorDeErros(), dadosDaForca.getControladorDeLetrasJaDigitadas()));
 
     Comunicado comunicado = null;
     do {
       comunicado = (Comunicado) servidor.espie();
 
       if (comunicado instanceof ComunicadoSeuTurno) {
+        comunicado = (ComunicadoSeuTurno) servidor.envie();
+
         Palavra palavraSorteada = dadosDaForca.getPalavra();
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
         ControladorDeErros erros = dadosDaForca.getControladorDeErros();
         ControladorDeLetrasJaDigitadas letrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
 
-        System.out.println(palavraSorteada.toString());
+        System.out.println(palavraSorteada);
 
         System.out.println("Palavra......: " + tracinhos.toString());
         System.out.println("Digitadas....: " + letrasJaDigitadas.toString());
