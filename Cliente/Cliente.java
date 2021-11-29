@@ -65,7 +65,6 @@ public class Cliente {
     } // sei que servidor foi instanciado
     tratadoraDeComunicadoDeDesligamento.start();
 
-<<<<<<< HEAD
     try {
       try {
         File logo = new File("../logo.txt");
@@ -82,23 +81,24 @@ public class Cliente {
     } catch (Exception erro) {
     }
 
-    tratadoraDeComunicadoDeDesligamento.run();
-
-    // Pega a quantidade de tracinhos
-    servidor.receba(new PedidoDeTracinhos());
+    // Pegar os dados do jogo da forca
+    servidor.receba(new PedidoDeDados());
     Comunicado comunicado = null;
     do {
       comunicado = (Comunicado) servidor.espie();
-    } while (!(comunicado instanceof PediddoDeTracinhos));
-    Tracinhos tracinhos = (Tracinhos) servidor.envie();
+    } while (!(comunicado instanceof ComunicadoDeDados));
+    ComunicadoDeDados dadosDaForca = (ComunicadoDeDados) servidor.envie();
 
-    // Pegar a palavra sorteada do servidor
-    servidor.receba(new PedidoDePalavra());
-    comunicado = null;
-    do {
-      comunicado = (Comunicado) servidor.espie();
-    } while (!(comunicado instanceof Palavra));
-    Palavra palavraSorteada = (Palavra) servidor.envie();
+    Palavra palavraSorteada = dadosDaForca.getPalavra();
+    Tracinhos tracinhos = dadosDaForca.getTracinhos();
+    ControladorDeErros erros = dadosDaForca.getControladorDeErros();
+    ControladorDeLetrasJaDigitadas letrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
+
+    System.out.println("Palavra......: " + tracinhos.toString());
+    System.out.println("Digitadas....: " + letrasJaDigitadas.toString());
+    System.out.println("Erros........: " + erros.toString());
+
+
 
     try {
       System.out
@@ -111,8 +111,8 @@ public class Cliente {
         Palavra palavraAdivinhada = new Palavra(Teclado.getUmString().toUpperCase());
 
         if (palavraSorteada.compareTo(palavraAdivinhada) == 0) {
-          System.out.println("Parabéns!!! Você acertou a palavra e consequentemente GANHOU O JOGO ");
-          servidor.receba(new ComunicadoGanhoPorAcertarPalavra());
+          System.out.println("Parabéns!!! Você acertou a palavra e consequentemente GANHOU O JOGO!");
+          servidor.receba(new ComunicadoGanhouPorAcertarPalavra());
           return;
         } else {
           System.out.println("Que pena, você errou a palavra\n");
@@ -138,14 +138,14 @@ public class Cliente {
         if (isJaDigitada)
           System.out.println("Essa letra ja foi digitada!\n");
         else {
-          servidor.receba(new PedidoDeRegistramentoDeLetra(letra));
+          servidor.receba(new PedidoDeRegistroDeLetra(letra));
 
           int qtdDeAparicoes = palavraSorteada.getQuantidade(letra);
 
           if (qtdDeAparicoes == 0) {
             System.err.println("A palavra nao tem essa letra!\n");
 
-            servidor.receba(new PedidoDeMaximoDeErros());
+            servidor.receba(new PedidoDeMaximoDeErros(false));
             comunicado = null;
             do {
               comunicado = (Comunicado) servidor.espie();

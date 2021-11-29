@@ -1,4 +1,4 @@
-public class Tracinhos implements Cloneable
+public class Tracinhos extends Comunicado implements Cloneable 
 {
     private char texto [];
 

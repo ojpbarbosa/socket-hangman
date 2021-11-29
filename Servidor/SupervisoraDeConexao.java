@@ -83,17 +83,19 @@ public class SupervisoraDeConexao extends Thread {
           String nome = ((PedidoDeNome) comunicado).getNome();
           this.jogador.setNome(nome);
         } else if (comunicado instanceof PedidoDeLetraJaDigitada) {
-          char letraJaDigitada = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
+          char letraParaConferir = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
+          boolean isJaDigitada = controladorDeLetrasJaDigitadas.isJaDigitada(letraParaConferir);
+          ((PedidoDeLetraJaDigitada) comunicado).setJaDigitada(isJaDigitada);
 
-          controladorDeLetrasJaDigitadas.registre(letraJaDigitada);
+          this.jogador.receba((PedidoDeLetraJaDigitada) comunicado);
         } else if (comunicado instanceof PedidoDeMaximoDeErros) {
           boolean isAtingiuMaximoDeErros = controladorDeErros.isAtingidoMaximoDeErros();
           PedidoDeMaximoDeErros pedidoDeMaximoDeErros = new PedidoDeMaximoDeErros(isAtingiuMaximoDeErros);
 
           this.jogador.receba(pedidoDeMaximoDeErros);
-        } else if (comunicado instanceof PedidoDePalavra) {
-          this.jogador.receba(this.palavraSorteada);
-          System.out.println(palavraSorteada);
+        } else if (comunicado instanceof PedidoDeDados) {
+          ComunicadoDeDados dadosDaForca = new ComunicadoDeDados(this.palavraSorteada, tracinhos, controladorDeErros, controladorDeLetrasJaDigitadas);
+          this.jogador.receba(dadosDaForca);
         } else if (comunicado instanceof PedidoDeRegistroDeLetra) {
           char letraParaRegistrar = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
 

@@ -1,4 +1,4 @@
-public class ControladorDeLetrasJaDigitadas implements Cloneable {
+public class ControladorDeLetrasJaDigitadas extends Comunicado implements Cloneable {
     private String letrasJaDigitadas;
 
     public ControladorDeLetrasJaDigitadas() {
