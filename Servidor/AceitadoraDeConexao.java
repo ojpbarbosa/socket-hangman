@@ -22,7 +22,6 @@ public class AceitadoraDeConexao extends Thread {
   }
 
   public void run() {
-
     for (;;) {
       Socket conexao = null;
       try {
@@ -38,7 +37,6 @@ public class AceitadoraDeConexao extends Thread {
       } catch (Exception erro) {
       }
       supervisoraDeConexao.start();
-
     }
   }
 }

@@ -7,9 +7,6 @@ public class SupervisoraDeConexao extends Thread {
   private Socket conexao;
   private ArrayList<Parceiro> jogadores;
   private Palavra palavraSorteada;
-  private int qtdJogadores = 0;
-  private int qtdJogadoresProntos = 0;
-  private boolean jaPediuPalavra = false;
   private Tracinhos tracinhos;
   private ControladorDeErros controladorDeErros;
   private ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas;
@@ -53,25 +50,20 @@ public class SupervisoraDeConexao extends Thread {
     try {
       synchronized (this.jogadores) {
         this.jogadores.add(this.jogador);
-        this.qtdJogadores++;
 
-        if (this.qtdJogadores == 1) {
-          try {
-            this.palavraSorteada = BancoDePalavras.getPalavraSorteada();
+        if (this.jogadores.size() == 3) {
+          this.palavraSorteada = BancoDePalavras.getPalavraSorteada();
+          this.tracinhos = new Tracinhos(this.palavraSorteada.getTamanho());
+          this.controladorDeLetrasJaDigitadas = new ControladorDeLetrasJaDigitadas();
+          this.controladorDeErros = new ControladorDeErros((int) (this.palavraSorteada.getTamanho() * 0.6));
 
-            this.tracinhos = new Tracinhos(this.palavraSorteada.getTamanho());
+          for (Parceiro jogador : this.jogadores) {
+            ComunicadoComecar comunicadoComecar = new ComunicadoComecar(this.palavraSorteada, this.tracinhos,
+                this.controladorDeErros,
+                this.controladorDeLetrasJaDigitadas);
 
-            this.controladorDeLetrasJaDigitadas = new ControladorDeLetrasJaDigitadas();
-
-            this.controladorDeErros = new ControladorDeErros((int) (this.palavraSorteada.getTamanho() * 0.6));
-          } catch (Exception erro) {
+            jogador.receba(comunicadoComecar);
           }
-        }
-
-        else if (this.qtdJogadores == 3) {
-          for (Parceiro jogador : this.jogadores)
-            jogador.receba(new ComunicadoComecar(this.palavraSorteada, this.tracinhos, this.controladorDeErros,
-                this.controladorDeLetrasJaDigitadas));
 
           jogadores.get(0).receba(new ComunicadoSeuTurno());
         }
@@ -82,7 +74,13 @@ public class SupervisoraDeConexao extends Thread {
 
         if (comunicado == null)
           return;
-        else if (comunicado instanceof PedidoDeNome) {
+        else if (comunicado instanceof PedidoAtualizarDados) {
+          PedidoAtualizarDados pedido = (PedidoAtualizarDados) comunicado;
+          this.palavraSorteada = pedido.getPalavra();
+          this.tracinhos = pedido.getTracinhos();
+          this.controladorDeErros = pedido.getControladorDeErros();
+          this.controladorDeLetrasJaDigitadas = pedido.getControladorDeLetrasJaDigitadas();
+        } else if (comunicado instanceof PedidoDeNome) {
           String nome = ((PedidoDeNome) comunicado).getNome();
           this.jogador.setNome(nome);
         } else if (comunicado instanceof PedidoDeLetraJaDigitada) {
