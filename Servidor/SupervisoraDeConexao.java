@@ -105,6 +105,9 @@ public class SupervisoraDeConexao extends Thread {
           char letraParaRevelar = ((PedidoDeRevelacao) comunicado).getLetra();
 
           tracinhos.revele(posicaoParaRevelar, letraParaRevelar);
+        } else if (comunicado instanceof PedidoDeTracinhos){
+          PedidoDeTracinhos stringTracinhos = new PedidoDeTracinhos(tracinhos.toString());
+          this.jogador.receba(stringTracinhos);
         } else if (comunicado instanceof PedidoParaSair) {
           synchronized (this.jogadores) {
             this.jogadores.remove(this.jogador);
