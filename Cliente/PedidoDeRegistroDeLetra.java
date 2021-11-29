@@ -1,7 +1,7 @@
-public class PedidoDeRegistramentoDeLetra extends Comunicado {
+public class PedidoDeRegistroDeLetra extends Comunicado {
   private char letra;
-  
-  public PedidoDeRegistramentoDeLetra(char letra) {
+
+  public PedidoDeRegistroDeLetra(char letra) {
     this.letra = letra;
   }
 

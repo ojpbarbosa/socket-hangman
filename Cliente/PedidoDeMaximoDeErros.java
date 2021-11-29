@@ -1,7 +1,7 @@
 public class PedidoDeMaximoDeErros extends Comunicado {
-  private boolean isAtingidoMaximoDeErros; 
+  private boolean isAtingidoMaximoDeErros;
 
-  public void setAtingidoMaximoDeErros(boolean isAtingidoMaximoDeErros) {
+  public PedidoDeMaximoDeErros(boolean isAtingidoMaximoDeErros) {
     this.isAtingidoMaximoDeErros = isAtingidoMaximoDeErros;
   }
 
