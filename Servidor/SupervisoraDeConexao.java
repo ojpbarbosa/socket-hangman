@@ -6,10 +6,13 @@ public class SupervisoraDeConexao extends Thread {
   private Parceiro jogador;
   private Socket conexao;
   private ArrayList<Parceiro> jogadores;
-  private static Palavra palavraSorteada;
-  private static int qtdJogadores = 0;
-  private static int qtdJogadoresProntos = 0;
-  private static boolean jaPediuPalavra = false;
+  private Palavra palavraSorteada;
+  private int qtdJogadores = 0;
+  private int qtdJogadoresProntos = 0;
+  private boolean jaPediuPalavra = false;
+  private Tracinhos tracinhos;
+  private ControladorDeErros controladorDeErros;
+  private ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas;
 
   public SupervisoraDeConexao(Socket conexao, ArrayList<Parceiro> jogadores) throws Exception {
     if (conexao == null)
@@ -48,29 +51,29 @@ public class SupervisoraDeConexao extends Thread {
     }
 
     try {
-      Tracinhos tracinhos = null;
-      ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = null;
-      ControladorDeErros controladorDeErros = null;
-
       synchronized (this.jogadores) {
         this.jogadores.add(this.jogador);
         this.qtdJogadores++;
 
-        if (this.qtdJogadores == 3) {
-          for (Parceiro jogador : this.jogadores) {
-            jogador.receba(new ComunicadoComecar());
-          }
-
+        if (this.qtdJogadores == 1) {
           try {
             this.palavraSorteada = BancoDePalavras.getPalavraSorteada();
 
-            tracinhos = new Tracinhos(this.palavraSorteada.getTamanho());
+            this.tracinhos = new Tracinhos(this.palavraSorteada.getTamanho());
 
-            controladorDeLetrasJaDigitadas = new ControladorDeLetrasJaDigitadas();
+            this.controladorDeLetrasJaDigitadas = new ControladorDeLetrasJaDigitadas();
 
-            controladorDeErros = new ControladorDeErros((int) (this.palavraSorteada.getTamanho() * 0.6));
+            this.controladorDeErros = new ControladorDeErros((int) (this.palavraSorteada.getTamanho() * 0.6));
           } catch (Exception erro) {
           }
+        }
+
+        else if (this.qtdJogadores == 3) {
+          for (Parceiro jogador : this.jogadores)
+            jogador.receba(new ComunicadoComecar(this.palavraSorteada, this.tracinhos, this.controladorDeErros,
+                this.controladorDeLetrasJaDigitadas));
+
+          jogadores.get(0).receba(new ComunicadoSeuTurno());
         }
       }
 
@@ -93,10 +96,6 @@ public class SupervisoraDeConexao extends Thread {
           PedidoDeMaximoDeErros pedidoDeMaximoDeErros = new PedidoDeMaximoDeErros(isAtingiuMaximoDeErros);
 
           this.jogador.receba(pedidoDeMaximoDeErros);
-        } else if (comunicado instanceof PedidoDeDados) {
-          ComunicadoDeDados dadosDaForca = new ComunicadoDeDados(this.palavraSorteada, tracinhos, controladorDeErros,
-              controladorDeLetrasJaDigitadas);
-          this.jogador.receba(dadosDaForca);
         } else if (comunicado instanceof PedidoDeRegistroDeLetra) {
           char letraParaRegistrar = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
 
