@@ -10,7 +10,6 @@ public class TratadoraDeComunicadoDeDesligamento extends Thread {
 
   public void run() {
     for (;;) {
-      System.out.println("Tratadora de comunicado de desligamento rodando!");
       try {
         if (this.servidor.espie() instanceof ComunicadoDeDesligamento) {
           System.out.println("\nO servidor vai ser desligado agora;");

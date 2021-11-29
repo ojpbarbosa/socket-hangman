@@ -1,4 +1,4 @@
-public class ControladorDeErros extends Comunicado implements Cloneable {
+public class ControladorDeErros implements Cloneable {
     private int qtdMax, qtdErr = 0;
 
     public ControladorDeErros(int qtdMax) throws Exception {

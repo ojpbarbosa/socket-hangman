@@ -86,6 +86,9 @@ public class Cliente {
     Comunicado comunicado = null;
     do {
       comunicado = (Comunicado) servidor.espie();
+
+      if (comunicado instanceof ComunicadoDeDesligamento)
+        break;
     } while (!(comunicado instanceof ComunicadoDeDados));
     ComunicadoDeDados dadosDaForca = (ComunicadoDeDados) servidor.envie();
 
@@ -94,11 +97,11 @@ public class Cliente {
     ControladorDeErros erros = dadosDaForca.getControladorDeErros();
     ControladorDeLetrasJaDigitadas letrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
 
+    System.out.println(palavraSorteada.toString());
+
     System.out.println("Palavra......: " + tracinhos.toString());
     System.out.println("Digitadas....: " + letrasJaDigitadas.toString());
     System.out.println("Erros........: " + erros.toString());
-
-
 
     try {
       System.out
@@ -151,7 +154,7 @@ public class Cliente {
               comunicado = (Comunicado) servidor.espie();
             } while (!(comunicado instanceof PedidoDeMaximoDeErros));
             PedidoDeMaximoDeErros pme = (PedidoDeMaximoDeErros) servidor.envie();
-            boolean isAtingidoMaximoDeErros = pme.getIsAtingidoMaximoDeErross();
+            boolean isAtingidoMaximoDeErros = pme.isAtingidoMaximoDeErros();
 
             if (isAtingidoMaximoDeErros) {
               System.out.println("E com esse erro você perdeu todas suas chances de acertar uma letra :(\n");
