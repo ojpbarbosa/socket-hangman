@@ -53,16 +53,19 @@ public class Cliente {
     try {
       servidor = new Parceiro(conexao, receptor, transmissor);
     } catch (Exception erro) {
-      System.err.println("Indique o servidor e a porta corretor!\n");
+      System.err.println("Indique o servidor e a porta corretos!\n");
       return;
     }
 
     TratadoraDeComunicadoDeDesligamento tratadoraDeComunicadoDeDesligamento = null;
     try {
+      System.out.println("tratadora iniciada");
       tratadoraDeComunicadoDeDesligamento = new TratadoraDeComunicadoDeDesligamento(servidor);
     } catch (Exception erro) {
     } // sei que servidor foi instanciado
+    tratadoraDeComunicadoDeDesligamento.start();
 
+<<<<<<< HEAD
     try {
       try {
         File logo = new File("../logo.txt");
@@ -74,9 +77,9 @@ public class Cliente {
       }
 
       System.out.println("\nConectado!\n");
-      System.out.println("Aguardando um oponente...");
+      System.out.println("Aguardando outros 2 adversários...");
       ComunicadoComecar podeIr = (ComunicadoComecar) servidor.envie();
-    } catch (Exception e) {
+    } catch (Exception erro) {
     }
 
     tratadoraDeComunicadoDeDesligamento.run();
@@ -86,8 +89,8 @@ public class Cliente {
     Comunicado comunicado = null;
     do {
       comunicado = (Comunicado) servidor.espie();
-    } while (!(comunicado instanceof Palavra));
-    Palavra p = (Palavra) servidor.envie();
+    } while (!(comunicado instanceof PediddoDeTracinhos));
+    Tracinhos tracinhos = (Tracinhos) servidor.envie();
 
     // Pegar a palavra sorteada do servidor
     servidor.receba(new PedidoDePalavra());

@@ -94,7 +94,7 @@ public class SupervisoraDeConexao extends Thread {
         } else if (comunicado instanceof PedidoDePalavra) {
           this.jogador.receba(this.palavraSorteada);
           System.out.println(palavraSorteada);
-        } else if (comunicado instanceof PedidoDeRegistramentoDeLetra) {
+        } else if (comunicado instanceof PedidoDeRegistroDeLetra) {
           char letraParaRegistrar = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
 
           controladorDeLetrasJaDigitadas.registre(letraParaRegistrar);
@@ -105,7 +105,7 @@ public class SupervisoraDeConexao extends Thread {
           char letraParaRevelar = ((PedidoDeRevelacao) comunicado).getLetra();
 
           tracinhos.revele(posicaoParaRevelar, letraParaRevelar);
-        } else if (comunicado instanceof PedidoDeTracinhos){
+        } else if (comunicado instanceof PedidoDeTracinhos) {
           PedidoDeTracinhos stringTracinhos = new PedidoDeTracinhos(tracinhos.toString());
           this.jogador.receba(stringTracinhos);
         } else if (comunicado instanceof PedidoParaSair) {

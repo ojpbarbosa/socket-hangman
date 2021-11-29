@@ -20,10 +20,10 @@ public class ControladorDeLetrasJaDigitadas implements Cloneable {
         if (letra == ' ')
             throw new Exception("Letra Ausente");
 
-        if (this.isJaDigitada(letra)) 
+        if (this.isJaDigitada(letra))
             throw new Exception("Letra já digitada");
 
-        this.letrasJaDigitadas += letra;       
+        this.letrasJaDigitadas += letra;
     }
 
     @Override
@@ -52,7 +52,7 @@ public class ControladorDeLetrasJaDigitadas implements Cloneable {
         if (obj.getClass() != ControladorDeLetrasJaDigitadas.class)
             return false;
 
-        ControladorDeLetrasJaDigitadas cljd = (ControladorDeLetrasJaDigitadas)obj;
+        ControladorDeLetrasJaDigitadas cljd = (ControladorDeLetrasJaDigitadas) obj;
         if (!this.letrasJaDigitadas.equals(cljd.letrasJaDigitadas))
             return false;
 
@@ -71,8 +71,8 @@ public class ControladorDeLetrasJaDigitadas implements Cloneable {
         return ret;
     }
 
-    public ControladorDeLetrasJaDigitadas(ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) throws Exception
-    {
+    public ControladorDeLetrasJaDigitadas(ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas)
+            throws Exception {
         if (controladorDeLetrasJaDigitadas == null)
             throw new Exception("Controlador Ausente");
 
@@ -80,16 +80,13 @@ public class ControladorDeLetrasJaDigitadas implements Cloneable {
     }
 
     @Override
-    public Object clone()
-    {
-        ControladorDeLetrasJaDigitadas ret = null; 
+    public Object clone() {
+        ControladorDeLetrasJaDigitadas ret = null;
         try {
             ret = new ControladorDeLetrasJaDigitadas(this);
-        }
-        catch (Exception erro) 
-        {} // Não tratamos pois sabemos que não ocorrerá
+        } catch (Exception erro) {
+        } // Não tratamos pois sabemos que não ocorrerá
 
         return ret;
     }
 }
-
