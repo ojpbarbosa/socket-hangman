@@ -15,7 +15,7 @@ public class SupervisoraDeConexao extends Thread {
 
   public SupervisoraDeConexao(Socket conexao, ArrayList<Parceiro> jogadores) throws Exception {
     if (conexao == null)
-      throw new Exception("Conexao ausente");
+      throw new Exception("Conexao ausente5");
 
     if (jogadores == null)
       throw new Exception("Jogadores ausentes");
@@ -76,12 +76,16 @@ public class SupervisoraDeConexao extends Thread {
 
         if (comunicado == null)
           return;
-        else if (comunicado instanceof PedidoAtualizarDados) {
-          PedidoAtualizarDados pedido = (PedidoAtualizarDados) comunicado;
+        else if (comunicado instanceof PedidoDeDados) {
+
+        }
+        else if (comunicado instanceof PedidoDeAtualizarDados pedido) {
+          System.out.println(pedido.getPalavra());
           this.palavraSorteada = pedido.getPalavra();
           this.tracinhos = pedido.getTracinhos();
           this.controladorDeErros = pedido.getControladorDeErros();
           this.controladorDeLetrasJaDigitadas = pedido.getControladorDeLetrasJaDigitadas();
+          
         } else if (comunicado instanceof PedidoDeNome) {
           String nome = ((PedidoDeNome) comunicado).getNome();
           this.jogador.setNome(nome);

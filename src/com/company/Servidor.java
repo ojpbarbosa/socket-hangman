@@ -48,7 +48,7 @@ public class Servidor {
 						try {
 							jogador.receba(comunicadoDeDesligamento);
 							jogador.adeus();
-						} catch (Exception errox) {
+						} catch (Exception erro) {
 						}
 					}
 				}

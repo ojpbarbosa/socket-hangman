@@ -1,7 +1,6 @@
 package com.company;
 
 import java.io.*;
-import java.util.*;
 import java.net.*;
 
 public class Cliente {
@@ -77,13 +76,12 @@ public class Cliente {
         comunicado = (Comunicado) servidor.envie();
       } while (!(comunicado instanceof ComunicadoComecar));
       // Junto com o comunicadoComecar vem os dados do jogo atual
-      dadosDaForca = (ComunicadoComecar) comunicado;
-
     } catch (Exception erro) {
-      System.err.println(erro.getMessage());
     }
 
-    servidor.receba(new PedidoAtualizarDados((Palavra) dadosDaForca.getPalavra(), dadosDaForca.getTracinhos(),
+    servidor.receba(new PedidoDeDados());
+
+    servidor.receba(new PedidoDeAtualizarDados((Palavra) dadosDaForca.getPalavra(), dadosDaForca.getTracinhos(),
         dadosDaForca.getControladorDeErros(), dadosDaForca.getControladorDeLetrasJaDigitadas()));
 
     Comunicado comunicado = null;

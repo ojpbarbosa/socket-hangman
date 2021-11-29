@@ -1,13 +1,13 @@
 package com.company;
 
-public class PedidoAtualizarDados extends Comunicado {
+public class PedidoDeAtualizarDados extends Comunicado {
   private Palavra palavra;
   private Tracinhos tracinhos;
   private ControladorDeErros controladorDeErros;
   private ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas;
 
-  public PedidoAtualizarDados(Palavra palavra, Tracinhos tracinhos, ControladorDeErros controladorDeErros,
-      ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
+  public PedidoDeAtualizarDados(Palavra palavra, Tracinhos tracinhos, ControladorDeErros controladorDeErros,
+                                ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
     this.palavra = palavra;
     this.tracinhos = tracinhos;
     this.controladorDeErros = controladorDeErros;
