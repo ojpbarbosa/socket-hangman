@@ -94,7 +94,7 @@ public class SupervisoraDeConexao extends Thread {
         } else if (comunicado instanceof PedidoDePalavra) {
           this.jogador.receba(this.palavraSorteada);
           System.out.println(palavraSorteada);
-        } else if (comunicado instanceof PedidoDeRegistramentoDeLetra) {
+        } else if (comunicado instanceof PedidoDeRegistroDeLetra) {
           char letraParaRegistrar = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
 
           controladorDeLetrasJaDigitadas.registre(letraParaRegistrar);
