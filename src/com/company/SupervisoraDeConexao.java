@@ -76,16 +76,12 @@ public class SupervisoraDeConexao extends Thread {
 
         if (comunicado == null)
           return;
-        else if (comunicado instanceof PedidoDeDados) {
-
-        }
         else if (comunicado instanceof PedidoDeAtualizarDados pedido) {
           System.out.println(pedido.getPalavra());
           this.palavraSorteada = pedido.getPalavra();
           this.tracinhos = pedido.getTracinhos();
           this.controladorDeErros = pedido.getControladorDeErros();
           this.controladorDeLetrasJaDigitadas = pedido.getControladorDeLetrasJaDigitadas();
-          
         } else if (comunicado instanceof PedidoDeNome) {
           String nome = ((PedidoDeNome) comunicado).getNome();
           this.jogador.setNome(nome);

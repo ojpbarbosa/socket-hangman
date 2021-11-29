@@ -1,6 +1,6 @@
 package com.company;
 
-public class ControladorDeErros implements Cloneable {
+public class ControladorDeErros extends Comunicado implements Cloneable {
     private int qtdMax, qtdErr = 0;
 
     public ControladorDeErros(int qtdMax) throws Exception {

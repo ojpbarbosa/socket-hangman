@@ -65,9 +65,7 @@ public class Cliente2 {
     } // sei que servidor foi instanciado
     tratadoraDeComunicadoDeDesligamento.start();
 
-    // dados do jogo atual
     ComunicadoComecar dadosDaForca = null;
-
     try {
       System.out.println("\nConectado!\n");
       System.out.println("Aguardando outros 2 adversários...");
@@ -75,12 +73,26 @@ public class Cliente2 {
       do {
         comunicado = (Comunicado) servidor.espie();
       } while (!(comunicado instanceof ComunicadoComecar));
+      comunicado = servidor.envie();
+      dadosDaForca = (ComunicadoComecar) comunicado;
       // Junto com o comunicadoComecar vem os dados do jogo atual
     } catch (Exception erro) {
     }
 
-    // servidor.receba(new PedidoDeAtualizarDados((Palavra) dadosDaForca.getPalavra(), dadosDaForca.getTracinhos(),
-    // dadosDaForca.getControladorDeErros(), dadosDaForca.getControladorDeLetrasJaDigitadas()));
+    // dados do jogo atual
+    /* ComunicadoDeDados dadosDaForca = null;
+    try {
+      servidor.receba(new PedidoDeDados());
+      Comunicado comunicado = null;
+      do {
+        comunicado = (Comunicado) servidor.envie();
+      } while (!(comunicado instanceof ComunicadoDeDados));
+      // Junto com o comunicadoComecar vem os dados do jogo atual
+      dadosDaForca = (ComunicadoDeDados) comunicado;
+    } catch (Exception erro) {
+    } */
+
+    System.out.println(((Palavra)dadosDaForca.getPalavra()).toString());
 
     Comunicado comunicado = null;
     do {

@@ -1,6 +1,6 @@
 package com.company;
 
-public class ComunicadoComecar<Palavra> extends Comunicado {
+public class ComunicadoComecar extends Comunicado {
   private Palavra palavra;
   private Tracinhos tracinhos;
   private ControladorDeErros controladorDeErros;
