@@ -45,7 +45,6 @@ public class Parceiro {
             if (this.proximoComunicado == null)
                 this.proximoComunicado = (Comunicado) this.receptor.readObject();
             this.mutEx.release();
-            System.out.println(proximoComunicado.getClass());
             return this.proximoComunicado;
         } catch (Exception erro) {
             throw new Exception("Erro de recepcao");
@@ -58,7 +57,6 @@ public class Parceiro {
                 this.proximoComunicado = (Comunicado) this.receptor.readObject();
             Comunicado ret = this.proximoComunicado;
             this.proximoComunicado = null;
-            System.out.println(ret.getClass());
             return ret;
         } catch (Exception erro) {
             throw new Exception("Erro de recepcao");

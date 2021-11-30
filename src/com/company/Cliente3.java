@@ -79,26 +79,28 @@ public class Cliente3 {
     } catch (Exception erro) {
     }
 
-    // dados do jogo atual
-    /* ComunicadoDeDados dadosDaForca = null;
-    try {
-      servidor.receba(new PedidoDeDados());
-      Comunicado comunicado = null;
-      do {
-        comunicado = (Comunicado) servidor.envie();
-      } while (!(comunicado instanceof ComunicadoDeDados));
-      // Junto com o comunicadoComecar vem os dados do jogo atual
-      dadosDaForca = (ComunicadoDeDados) comunicado;
-    } catch (Exception erro) {
-    } */
+    System.out.println("\nSua partida está sendo iniciada!\n");
 
-    System.out.println(((Palavra)dadosDaForca.getPalavra()).toString());
+    System.out.println(((Palavra)dadosDaForca.getPalavra()).toString()); ///////////////////////
+
+    boolean jogando = true;
 
     Comunicado comunicado = null;
     do {
       comunicado = (Comunicado) servidor.espie();
 
-      if (comunicado instanceof ComunicadoSeuTurno) {
+      if (comunicado instanceof ComunicadoGanhouPorAcertarPalavra) {
+        System.out.println("Oh, nao! Um outro jogador ganhou por acertar a palavra!");
+        System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
+        jogando = false;
+      }
+
+      else if (comunicado instanceof ComunicadoPerdeuPorErrarPalavra) {
+        System.out.println("Oh, nao! Um outro jogador foi eliminado por tentar acertar a palavra e errar!");
+        jogando = false;
+      }
+
+      else if (comunicado instanceof ComunicadoSeuTurno) {
         comunicado = (ComunicadoSeuTurno) servidor.envie();
 
         Palavra palavraSorteada = (Palavra) dadosDaForca.getPalavra();
@@ -106,20 +108,21 @@ public class Cliente3 {
         ControladorDeErros erros = dadosDaForca.getControladorDeErros();
         ControladorDeLetrasJaDigitadas letrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
 
-        System.out.println(palavraSorteada);
-
         System.out.println("Palavra......: " + tracinhos.toString());
         System.out.println("Digitadas....: " + letrasJaDigitadas.toString());
         System.out.println("Erros........: " + erros.toString());
 
         try {
-          System.out
-                  .println(
-                          "Sua vez de jogar, o que deseja fazer: adivinhar a palavra do jogo [1] ou adivinhar uma letra [2]");
-          System.out.print("Escolha um número: ");
-          int opcao = Teclado.getUmInt();
+          String opcao;
+          do {
+            System.out
+                    .println(
+                            "Sua vez de jogar, o que deseja fazer: adivinhar a palavra do jogo [1] ou adivinhar uma letra [2]");
+            System.out.print("Escolha um número: ");
+            opcao = Teclado.getUmString();
+          } while (!opcao.equals("1") && !opcao.equals("2"));
 
-          if (opcao == 1) {
+          if (opcao.equals("1")) {
             System.out.print("Qual é a palavra ? ");
             Palavra palavraAdivinhada = new Palavra(Teclado.getUmString().toUpperCase());
 
@@ -132,21 +135,26 @@ public class Cliente3 {
               System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
               System.out.println("Adeus.......");
 
-              servidor.receba(new ComunicadoPercaPorErrarPalavra());
+              servidor.receba(new ComunicadoPerdeuPorErrarPalavra());
               break;
             }
-          } else if (opcao == 2) {
+          } else {
             System.out.print("Qual letra? ");
             char letra = Character.toUpperCase(Teclado.getUmChar());
 
             // Verifica se uma letra já foi digitada
+            boolean isJaDigitada = false;
             servidor.receba(new PedidoDeLetraJaDigitada(letra));
-            comunicado = null;
-            do {
-              comunicado = (Comunicado) servidor.espie();
-            } while (!(comunicado instanceof PedidoDeLetraJaDigitada));
-            PedidoDeLetraJaDigitada pdjd = (PedidoDeLetraJaDigitada) servidor.envie();
-            boolean isJaDigitada = pdjd.getIsJaDigitada();
+            try {
+              Comunicado comunicadoLetras = null;
+              do {
+                comunicadoLetras = (Comunicado) servidor.espie();
+              } while (!(comunicadoLetras instanceof PedidoDeLetraJaDigitada));
+              comunicadoLetras = servidor.envie();
+              PedidoDeLetraJaDigitada pdjd = (PedidoDeLetraJaDigitada) comunicadoLetras;
+              isJaDigitada = pdjd.getIsJaDigitada();
+            } catch (Exception erro) {
+            }
 
             if (isJaDigitada)
               System.out.println("Essa letra ja foi digitada!\n");
@@ -186,7 +194,7 @@ public class Cliente3 {
         } catch (Exception erro) {
         }
       }
-    } while (true);
+    } while (jogando);
 
     try {
       servidor.receba(new PedidoParaSair());

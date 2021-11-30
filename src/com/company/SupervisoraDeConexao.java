@@ -77,18 +77,18 @@ public class SupervisoraDeConexao extends Thread {
         if (comunicado == null)
           return;
         else if (comunicado instanceof PedidoDeAtualizarDados pedido) {
-          System.out.println(pedido.getPalavra());
           this.palavraSorteada = pedido.getPalavra();
           this.tracinhos = pedido.getTracinhos();
           this.controladorDeErros = pedido.getControladorDeErros();
           this.controladorDeLetrasJaDigitadas = pedido.getControladorDeLetrasJaDigitadas();
+
         } else if (comunicado instanceof PedidoDeNome) {
           String nome = ((PedidoDeNome) comunicado).getNome();
           this.jogador.setNome(nome);
-        } else if (comunicado instanceof PedidoDeLetraJaDigitada) {
-          char letraParaConferir = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
+        } else if (comunicado instanceof PedidoDeLetraJaDigitada pedido) {
+          char letraParaConferir = pedido.getLetra();
           boolean isJaDigitada = controladorDeLetrasJaDigitadas.isJaDigitada(letraParaConferir);
-          ((PedidoDeLetraJaDigitada) comunicado).setJaDigitada(isJaDigitada);
+          pedido.setJaDigitada(isJaDigitada);
 
           this.jogador.receba((PedidoDeLetraJaDigitada) comunicado);
         } else if (comunicado instanceof PedidoDeMaximoDeErros) {
@@ -97,7 +97,7 @@ public class SupervisoraDeConexao extends Thread {
 
           this.jogador.receba(pedidoDeMaximoDeErros);
         } else if (comunicado instanceof PedidoDeRegistroDeLetra) {
-          char letraParaRegistrar = ((PedidoDeLetraJaDigitada) comunicado).getLetra();
+          char letraParaRegistrar = ((PedidoDeRegistroDeLetra) comunicado).getLetra();
 
           controladorDeLetrasJaDigitadas.registre(letraParaRegistrar);
         } else if (comunicado instanceof PedidoDeRegistroDeErro) {
@@ -107,7 +107,23 @@ public class SupervisoraDeConexao extends Thread {
           char letraParaRevelar = ((PedidoDeRevelacao) comunicado).getLetra();
 
           tracinhos.revele(posicaoParaRevelar, letraParaRevelar);
-        } else if (comunicado instanceof PedidoParaSair) {
+        } else if (comunicado instanceof ComunicadoGanhouPorAcertarPalavra) {
+          synchronized (this.jogadores) {
+            for (Parceiro jogador : this.jogadores) {
+              if (jogador != this.jogador)
+                jogador.receba(new ComunicadoGanhouPorAcertarPalavra());
+            }
+          }
+        } else if (comunicado instanceof ComunicadoPerdeuPorErrarPalavra) {
+          synchronized (this.jogadores) {
+            for (Parceiro jogador : this.jogadores) {
+              if (jogador != this.jogador)
+                jogador.receba(new ComunicadoPerdeuPorErrarPalavra());
+            }
+            this.jogador.adeus();
+          }
+        }
+        else if (comunicado instanceof PedidoParaSair) {
           synchronized (this.jogadores) {
             this.jogadores.remove(this.jogador);
           }
