@@ -100,7 +100,7 @@ public class Cliente2 {
       else if (comunicado instanceof ComunicadoPerdeuPorErrarPalavra)
         System.out.println("Oh, nao! Um outro jogador foi eliminado por tentar acertar a palavra e errar!");
 
-      if (comunicado instanceof ComunicadoSeuTurno) {
+      else if (comunicado instanceof ComunicadoSeuTurno) {
         Palavra palavraSorteada = dadosDaForca.getPalavra();
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
         ControladorDeErros erros = dadosDaForca.getControladorDeErros();
@@ -141,15 +141,14 @@ public class Cliente2 {
             char letra = Character.toUpperCase(Teclado.getUmChar());
 
             // verifica se uma letra já foi digitada
-            boolean isJaDigitada = false;
+            /* boolean isJaDigitada = false;
             try {
               servidor.receba(new PedidoDeLetraJaDigitada(letra));
               comunicado = null;
               do {
                 comunicado = (Comunicado) servidor.espie();
-              } while (!(comunicado instanceof PedidoDeLetraJaDigitada)); // mutEx crasha o programa; resolvendo esse, resolvemos todos.
+              } while (!(comunicado instanceof PedidoDeLetraJaDigitada pdjd)); // mutEx crasha o programa; resolvendo esse, resolvemos todos.
               comunicado = servidor.envie();
-              PedidoDeLetraJaDigitada pdjd = (PedidoDeLetraJaDigitada) comunicado;
               isJaDigitada = pdjd.getIsJaDigitada();
             } catch (Exception erro) {
             }
@@ -187,7 +186,7 @@ public class Cliente2 {
                   servidor.receba(new PedidoDeRevelacao(posicao, letra));
                 }
               }
-            }
+            } */
           }
         } catch (Exception erro) {
         }

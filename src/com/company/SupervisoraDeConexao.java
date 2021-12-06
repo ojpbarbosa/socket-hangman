@@ -85,11 +85,10 @@ public class SupervisoraDeConexao extends Thread {
         }
         // pedido de letra já digitada
         else if (comunicado instanceof PedidoDeLetraJaDigitada pedido) {
-          char letra = pedido.getLetra();
-          boolean isJaDigitada = this.controladorDeLetrasJaDigitadas.isJaDigitada(letra);
-          pedido.setJaDigitada(isJaDigitada);
+          PedidoDeLetraJaDigitada pljd = new PedidoDeLetraJaDigitada(pedido.getLetra());
+          pljd.setJaDigitada(this.controladorDeLetrasJaDigitadas.isJaDigitada(pedido.getLetra()));
 
-          this.jogador.receba(pedido);
+          this.jogador.receba(pljd);
         }
         // pedido de registro de letra
         else if (comunicado instanceof PedidoDeRegistroDeLetra pedido) {
@@ -145,8 +144,11 @@ public class SupervisoraDeConexao extends Thread {
           synchronized (this.jogadores) {
             int jogadorDaVez = this.jogadores.indexOf(jogador);
 
+            System.out.println("Jogador da vez: " + jogadorDaVez);
+
             if (jogadorDaVez < 2)
               jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno());
+
             else
               jogadores.get(0).receba(new ComunicadoSeuTurno());
           }
