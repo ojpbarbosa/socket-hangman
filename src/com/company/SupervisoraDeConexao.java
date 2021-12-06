@@ -76,53 +76,82 @@ public class SupervisoraDeConexao extends Thread {
 
         if (comunicado == null)
           return;
+        // pedido de atualizar dados
         else if (comunicado instanceof PedidoDeAtualizarDados pedido) {
           this.palavraSorteada = pedido.getPalavra();
           this.tracinhos = pedido.getTracinhos();
           this.controladorDeErros = pedido.getControladorDeErros();
           this.controladorDeLetrasJaDigitadas = pedido.getControladorDeLetrasJaDigitadas();
-
-        } else if (comunicado instanceof PedidoDeNome) {
-          String nome = ((PedidoDeNome) comunicado).getNome();
-          this.jogador.setNome(nome);
-        } else if (comunicado instanceof PedidoDeLetraJaDigitada pedido) {
-          char letraParaConferir = pedido.getLetra();
-          boolean isJaDigitada = controladorDeLetrasJaDigitadas.isJaDigitada(letraParaConferir);
+        }
+        // pedido de letra já digitada
+        else if (comunicado instanceof PedidoDeLetraJaDigitada pedido) {
+          char letra = pedido.getLetra();
+          boolean isJaDigitada = this.controladorDeLetrasJaDigitadas.isJaDigitada(letra);
           pedido.setJaDigitada(isJaDigitada);
 
-          this.jogador.receba((PedidoDeLetraJaDigitada) comunicado);
-        } else if (comunicado instanceof PedidoDeMaximoDeErros) {
-          boolean isAtingiuMaximoDeErros = controladorDeErros.isAtingidoMaximoDeErros();
+          this.jogador.receba(pedido);
+        }
+        // pedido de registro de letra
+        else if (comunicado instanceof PedidoDeRegistroDeLetra pedido) {
+          char letra = pedido.getLetra();
+
+          this.controladorDeLetrasJaDigitadas.registre(letra);
+        }
+        // pedido de máximo de erros
+        else if (comunicado instanceof PedidoDeMaximoDeErros) {
+          boolean isAtingiuMaximoDeErros = this.controladorDeErros.isAtingidoMaximoDeErros();
           PedidoDeMaximoDeErros pedidoDeMaximoDeErros = new PedidoDeMaximoDeErros(isAtingiuMaximoDeErros);
 
           this.jogador.receba(pedidoDeMaximoDeErros);
-        } else if (comunicado instanceof PedidoDeRegistroDeLetra) {
-          char letraParaRegistrar = ((PedidoDeRegistroDeLetra) comunicado).getLetra();
-
-          controladorDeLetrasJaDigitadas.registre(letraParaRegistrar);
-        } else if (comunicado instanceof PedidoDeRegistroDeErro) {
+        }
+        // pedido de registro de erro
+        else if (comunicado instanceof PedidoDeRegistroDeErro) {
           controladorDeErros.registreUmErro();
-        } else if (comunicado instanceof PedidoDeRevelacao) {
-          int posicaoParaRevelar = ((PedidoDeRevelacao) comunicado).getPosicao();
-          char letraParaRevelar = ((PedidoDeRevelacao) comunicado).getLetra();
+        }
+        // pedido de revelação
+        else if (comunicado instanceof PedidoDeRevelacao pedido) {
+          int posicao = pedido.getPosicao();
+          char letra = pedido.getLetra();
 
-          tracinhos.revele(posicaoParaRevelar, letraParaRevelar);
-        } else if (comunicado instanceof ComunicadoGanhouPorAcertarPalavra) {
+          tracinhos.revele(posicao, letra);
+        }
+        // comunicado ganhou por acertar a palavra
+        else if (comunicado instanceof ComunicadoGanhouPorAcertarPalavra) {
           synchronized (this.jogadores) {
             for (Parceiro jogador : this.jogadores) {
               if (jogador != this.jogador)
                 jogador.receba(new ComunicadoGanhouPorAcertarPalavra());
             }
           }
-        } else if (comunicado instanceof ComunicadoPerdeuPorErrarPalavra) {
+        }
+        // comunicado perdeu por errar a palavra
+        else if (comunicado instanceof ComunicadoPerdeuPorErrarPalavra) { //////////////
           synchronized (this.jogadores) {
             for (Parceiro jogador : this.jogadores) {
               if (jogador != this.jogador)
                 jogador.receba(new ComunicadoPerdeuPorErrarPalavra());
             }
-            this.jogador.adeus();
+
+            int jogadorDaVez = this.jogadores.indexOf(jogador);
+
+            if (jogadorDaVez < 2)
+              jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno());
+            else
+              jogadores.get(0).receba(new ComunicadoSeuTurno());
           }
         }
+        // comunicado fim de turno
+        else if (comunicado instanceof ComunicadoFimDeTurno) {
+          synchronized (this.jogadores) {
+            int jogadorDaVez = this.jogadores.indexOf(jogador);
+
+            if (jogadorDaVez < 2)
+              jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno());
+            else
+              jogadores.get(0).receba(new ComunicadoSeuTurno());
+          }
+        }
+        // pedido para sair
         else if (comunicado instanceof PedidoParaSair) {
           synchronized (this.jogadores) {
             this.jogadores.remove(this.jogador);

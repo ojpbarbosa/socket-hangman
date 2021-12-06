@@ -6,12 +6,11 @@ public class PedidoDeAtualizarDados extends Comunicado {
   private ControladorDeErros controladorDeErros;
   private ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas;
 
-  public PedidoDeAtualizarDados(Palavra palavra, Tracinhos tracinhos, ControladorDeErros controladorDeErros,
-                                ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
-    this.palavra = palavra;
-    this.tracinhos = tracinhos;
-    this.controladorDeErros = controladorDeErros;
-    this.controladorDeLetrasJaDigitadas = controladorDeLetrasJaDigitadas;
+  public PedidoDeAtualizarDados(ComunicadoComecar dadosDaForca) {
+    this.palavra = dadosDaForca.getPalavra();
+    this.tracinhos = dadosDaForca.getTracinhos();
+    this.controladorDeErros = dadosDaForca.getControladorDeErros();
+    this.controladorDeLetrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
   }
 
   public Palavra getPalavra() {

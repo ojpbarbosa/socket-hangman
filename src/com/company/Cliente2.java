@@ -83,6 +83,8 @@ public class Cliente2 {
 
     System.out.println(((Palavra)dadosDaForca.getPalavra()).toString()); ///////////////////////
 
+    servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
+
     boolean jogando = true;
 
     Comunicado comunicado = null;
@@ -95,15 +97,11 @@ public class Cliente2 {
         jogando = false;
       }
 
-      else if (comunicado instanceof ComunicadoPerdeuPorErrarPalavra) {
+      else if (comunicado instanceof ComunicadoPerdeuPorErrarPalavra)
         System.out.println("Oh, nao! Um outro jogador foi eliminado por tentar acertar a palavra e errar!");
-        jogando = false;
-      }
 
-      else if (comunicado instanceof ComunicadoSeuTurno) {
-        comunicado = (ComunicadoSeuTurno) servidor.envie();
-
-        Palavra palavraSorteada = (Palavra) dadosDaForca.getPalavra();
+      if (comunicado instanceof ComunicadoSeuTurno) {
+        Palavra palavraSorteada = dadosDaForca.getPalavra();
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
         ControladorDeErros erros = dadosDaForca.getControladorDeErros();
         ControladorDeLetrasJaDigitadas letrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
@@ -129,29 +127,29 @@ public class Cliente2 {
             if (palavraSorteada.compareTo(palavraAdivinhada) == 0) {
               System.out.println("Parabéns!!! Você acertou a palavra e consequentemente GANHOU O JOGO!");
               servidor.receba(new ComunicadoGanhouPorAcertarPalavra());
-              break;
+              jogando = false;
             } else {
               System.out.println("Que pena, você errou a palavra\n");
               System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
               System.out.println("Adeus.......");
 
               servidor.receba(new ComunicadoPerdeuPorErrarPalavra());
-              break;
+              jogando = false;
             }
           } else {
-            System.out.print("Qual letra? ");
+            System.out.print("Qual letra ? ");
             char letra = Character.toUpperCase(Teclado.getUmChar());
 
-            // Verifica se uma letra já foi digitada
+            // verifica se uma letra já foi digitada
             boolean isJaDigitada = false;
-            servidor.receba(new PedidoDeLetraJaDigitada(letra));
             try {
-              Comunicado comunicadoLetras = null;
+              servidor.receba(new PedidoDeLetraJaDigitada(letra));
+              comunicado = null;
               do {
-                comunicadoLetras = (Comunicado) servidor.espie();
-              } while (!(comunicadoLetras instanceof PedidoDeLetraJaDigitada));
-              comunicadoLetras = servidor.envie();
-              PedidoDeLetraJaDigitada pdjd = (PedidoDeLetraJaDigitada) comunicadoLetras;
+                comunicado = (Comunicado) servidor.espie();
+              } while (!(comunicado instanceof PedidoDeLetraJaDigitada)); // mutEx crasha o programa; resolvendo esse, resolvemos todos.
+              comunicado = servidor.envie();
+              PedidoDeLetraJaDigitada pdjd = (PedidoDeLetraJaDigitada) comunicado;
               isJaDigitada = pdjd.getIsJaDigitada();
             } catch (Exception erro) {
             }
@@ -179,7 +177,7 @@ public class Cliente2 {
                   System.out.println("Adeus.......");
 
                   servidor.receba(new ComunicadoPercaPorAtingirMaximoDeErros());
-                  break;
+                  jogando = false;
                 } else
                   servidor.receba(new PedidoDeRegistroDeErro());
               } else {
@@ -193,6 +191,7 @@ public class Cliente2 {
           }
         } catch (Exception erro) {
         }
+        servidor.receba(new ComunicadoFimDeTurno());
       }
     } while (jogando);
 

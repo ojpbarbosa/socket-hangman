@@ -11,6 +11,7 @@ public class PedidoDeRegistroDeLetra extends Comunicado {
     return this.letra;
   }
 
+  @Override
   public String toString() {
     return ("" + this.letra);
   }
