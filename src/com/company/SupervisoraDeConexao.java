@@ -15,7 +15,7 @@ public class SupervisoraDeConexao extends Thread {
 
   public SupervisoraDeConexao(Socket conexao, ArrayList<Parceiro> jogadores) throws Exception {
     if (conexao == null)
-      throw new Exception("Conexao ausente5");
+      throw new Exception("Conexao ausente");
 
     if (jogadores == null)
       throw new Exception("Jogadores ausentes");
@@ -61,8 +61,8 @@ public class SupervisoraDeConexao extends Thread {
 
           for (Parceiro jogador : this.jogadores) {
             ComunicadoComecar comunicadoComecar = new ComunicadoComecar(this.palavraSorteada, this.tracinhos,
-                this.controladorDeErros,
-                this.controladorDeLetrasJaDigitadas);
+                    this.controladorDeErros,
+                    this.controladorDeLetrasJaDigitadas);
 
             jogador.receba(comunicadoComecar);
           }
@@ -83,16 +83,24 @@ public class SupervisoraDeConexao extends Thread {
           this.controladorDeErros = pedido.getControladorDeErros();
           this.controladorDeLetrasJaDigitadas = pedido.getControladorDeLetrasJaDigitadas();
         }
-        // pedido de letra já digitada
-        else if (comunicado instanceof PedidoDeLetraJaDigitada pedido) {
-          PedidoDeLetraJaDigitada pljd = new PedidoDeLetraJaDigitada(pedido.getLetra());
-          pljd.setJaDigitada(this.controladorDeLetrasJaDigitadas.isJaDigitada(pedido.getLetra()));
+        else if (comunicado instanceof PedidoDeDados) {
+          ComunicadoDeDados comunicadoDeDados = new ComunicadoDeDados(
+                  this.palavraSorteada,
+                  this.tracinhos,
+                  this.controladorDeErros,
+                  this.controladorDeLetrasJaDigitadas);
 
-          this.jogador.receba(pljd);
+          jogador.receba(comunicadoDeDados);
+        }
+        // pedido de letra já digitada
+        else if (comunicado instanceof ComunicadoDeLetraJaDigitada cljd) {
+          cljd.setJaDigitada(this.controladorDeLetrasJaDigitadas.isJaDigitada(cljd.getLetra()));
+
+          this.jogador.receba(cljd);
         }
         // pedido de registro de letra
-        else if (comunicado instanceof PedidoDeRegistroDeLetra pedido) {
-          char letra = pedido.getLetra();
+        else if (comunicado instanceof PedidoDeRegistroDeLetra prl) {
+          char letra = prl.getLetra();
 
           this.controladorDeLetrasJaDigitadas.registre(letra);
         }
@@ -108,9 +116,9 @@ public class SupervisoraDeConexao extends Thread {
           controladorDeErros.registreUmErro();
         }
         // pedido de revelação
-        else if (comunicado instanceof PedidoDeRevelacao pedido) {
-          int posicao = pedido.getPosicao();
-          char letra = pedido.getLetra();
+        else if (comunicado instanceof PedidoDeRevelacao pr) {
+          int posicao = pr.getPosicao();
+          char letra = pr.getLetra();
 
           tracinhos.revele(posicao, letra);
         }
@@ -144,8 +152,6 @@ public class SupervisoraDeConexao extends Thread {
           synchronized (this.jogadores) {
             int jogadorDaVez = this.jogadores.indexOf(jogador);
 
-            System.out.println("Jogador da vez: " + jogadorDaVez);
-
             if (jogadorDaVez < 2)
               jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno());
 
@@ -167,6 +173,8 @@ public class SupervisoraDeConexao extends Thread {
         receptor.close();
       } catch (Exception falha) {
       }
+
+      System.err.println(erro.getMessage());
 
       return;
     }

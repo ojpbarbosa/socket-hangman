@@ -75,7 +75,6 @@ public class Cliente3 {
       } while (!(comunicado instanceof ComunicadoComecar));
       comunicado = servidor.envie();
       dadosDaForca = (ComunicadoComecar) comunicado;
-      // Junto com o comunicadoComecar vem os dados do jogo atual
     } catch (Exception erro) {
     }
 
@@ -86,7 +85,6 @@ public class Cliente3 {
     servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
 
     boolean jogando = true;
-
     Comunicado comunicado = null;
     do {
       comunicado = (Comunicado) servidor.espie();
@@ -101,10 +99,33 @@ public class Cliente3 {
         System.out.println("Oh, nao! Um outro jogador foi eliminado por tentar acertar a palavra e errar!");
 
       else if (comunicado instanceof ComunicadoSeuTurno) {
+        ComunicadoDeDados dadosAtualizados = null;
+        try {
+          comunicado = servidor.envie();
+          servidor.receba(new PedidoDeDados());
+          comunicado = null;
+          do {
+            comunicado = servidor.espie();
+          } while (!(comunicado instanceof ComunicadoDeDados));
+          comunicado = servidor.envie();
+          dadosAtualizados = (ComunicadoDeDados) comunicado;
+        } catch (Exception error) {
+        }
+
+        dadosDaForca.setPalavra(dadosAtualizados.getPalavra());
+        dadosDaForca.setTracinhos(dadosAtualizados.getTracinhos());
+        dadosDaForca.setControladorDeErros(dadosAtualizados.getControladorDeErros());
+        dadosDaForca.setControladorDeLetrasJaDigitadas(dadosAtualizados.getControladorDeLetrasJaDigitadas());
+
         Palavra palavraSorteada = dadosDaForca.getPalavra();
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
         ControladorDeErros erros = dadosDaForca.getControladorDeErros();
         ControladorDeLetrasJaDigitadas letrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
+
+        System.out.println(palavraSorteada.hashCode());
+        System.out.println(tracinhos.hashCode());
+        System.out.println(erros.hashCode());
+        System.out.println(letrasJaDigitadas.hashCode());
 
         System.out.println("Palavra......: " + tracinhos.toString());
         System.out.println("Digitadas....: " + letrasJaDigitadas.toString());
@@ -141,15 +162,15 @@ public class Cliente3 {
             char letra = Character.toUpperCase(Teclado.getUmChar());
 
             // verifica se uma letra já foi digitada
-            /* boolean isJaDigitada = false;
+            boolean isJaDigitada = false;
             try {
-              servidor.receba(new PedidoDeLetraJaDigitada(letra));
+              servidor.receba(new ComunicadoDeLetraJaDigitada(letra));
               comunicado = null;
               do {
                 comunicado = (Comunicado) servidor.espie();
-              } while (!(comunicado instanceof PedidoDeLetraJaDigitada pdjd)); // mutEx crasha o programa; resolvendo esse, resolvemos todos.
+              } while (!(comunicado instanceof ComunicadoDeLetraJaDigitada));
               comunicado = servidor.envie();
-              isJaDigitada = pdjd.getIsJaDigitada();
+              isJaDigitada = ((ComunicadoDeLetraJaDigitada) comunicado).getIsJaDigitada();
             } catch (Exception erro) {
             }
 
@@ -168,8 +189,8 @@ public class Cliente3 {
                 do {
                   comunicado = (Comunicado) servidor.espie();
                 } while (!(comunicado instanceof PedidoDeMaximoDeErros));
-                PedidoDeMaximoDeErros pme = (PedidoDeMaximoDeErros) servidor.envie();
-                boolean isAtingidoMaximoDeErros = pme.isAtingidoMaximoDeErros();
+                comunicado = servidor.envie();
+                boolean isAtingidoMaximoDeErros = ((PedidoDeMaximoDeErros) comunicado).isAtingidoMaximoDeErros();
 
                 if (isAtingidoMaximoDeErros) {
                   System.out.println("E com esse erro você perdeu todas suas chances de acertar uma letra :(\n");
@@ -185,8 +206,13 @@ public class Cliente3 {
 
                   servidor.receba(new PedidoDeRevelacao(posicao, letra));
                 }
+
+                if (!tracinhos.isAindaComTracinhos()) {
+                  servidor.receba(new ComunicadoGanhouPorAcertarPalavra());
+                  jogando = false;
+                }
               }
-            } */
+            }
           }
         } catch (Exception erro) {
         }

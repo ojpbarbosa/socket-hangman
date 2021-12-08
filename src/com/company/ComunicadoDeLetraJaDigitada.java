@@ -1,10 +1,10 @@
 package com.company;
 
-public class PedidoDeLetraJaDigitada extends Comunicado {
+public class ComunicadoDeLetraJaDigitada extends Comunicado {
   private char letra;
   private boolean isJaDigitada;
 
-  public PedidoDeLetraJaDigitada(char letra) {
+  public ComunicadoDeLetraJaDigitada(char letra) {
     this.letra = letra;
   }
 
