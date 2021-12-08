@@ -152,7 +152,7 @@ public class SupervisoraDeConexao extends Thread {
           synchronized (this.jogadores) {
             int jogadorDaVez = this.jogadores.indexOf(jogador);
 
-            if (jogadorDaVez < 2)
+            if (jogadorDaVez < this.jogadores.size() - 1)
               jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno());
 
             else
