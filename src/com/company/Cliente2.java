@@ -101,6 +101,13 @@ public class Cliente2 {
       else if (comunicado instanceof ComunicadoSeuTurno) {
         System.out.println("Sua vez de jogar!\n");
 
+        ComunicadoSeuTurno cst = (ComunicadoSeuTurno) comunicado;
+
+        dadosDaForca.setPalavra(cst.getPalavra());
+        dadosDaForca.setTracinhos(cst.getTracinhos());
+        dadosDaForca.setControladorDeErros(cst.getControladorDeErros());
+        dadosDaForca.setControladorDeLetrasJaDigitadas(cst.getControladorDeLetrasJaDigitadas());
+
         Palavra palavraSorteada = dadosDaForca.getPalavra();
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
         ControladorDeErros erros = dadosDaForca.getControladorDeErros();
@@ -133,7 +140,7 @@ public class Cliente2 {
               System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
               System.out.println("Adeus.......");
 
-              servidor.receba(new ComunicadoPerdeuPorErrarPalavra());
+              servidor.receba(new ComunicadoPerdeuPorErrarPalavra(palavraSorteada, tracinhos, erros, letrasJaDigitadas));
               jogando = false;
             }
           } else if (opcao.equals("L")) {
@@ -175,7 +182,7 @@ public class Cliente2 {
                   System.out.println("E com esse erro você perdeu todas suas chances de acertar uma letra :(\n");
                   System.out.println("Adeus.......");
 
-                  servidor.receba(new ComunicadoPercaPorAtingirMaximoDeErros());
+                  servidor.receba(new ComunicadoPerdeuPorAtingirMaximoDeErros());
                   jogando = false;
                 } else
                   servidor.receba(new PedidoDeRegistroDeErro());
@@ -202,7 +209,7 @@ public class Cliente2 {
         if (jogando)
           System.out.println("\nOutro jogador ira jogar agora!\n");
 
-        servidor.receba(new ComunicadoFimDeTurno());
+        servidor.receba(new ComunicadoFimDeTurno(palavraSorteada, tracinhos, erros, letrasJaDigitadas));
       }
     } while (jogando);
 
