@@ -1,4 +1,4 @@
 package com.company;
 
-public class ComunicadoDeDerrotaPorAtingirMaximoDeErros extends Comunicado{
+public class ComunicadoDeDerrotaPorAtingirMaximoDeErros extends Comunicado {
 }

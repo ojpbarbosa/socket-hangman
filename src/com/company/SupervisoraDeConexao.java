@@ -61,19 +61,19 @@ public class SupervisoraDeConexao extends Thread {
 
           for (Parceiro jogador : this.jogadores) {
             ComunicadoDeInicio ComunicadoDeInicio = new ComunicadoDeInicio(
-                    this.palavraSorteada,
-                    this.tracinhos,
-                    this.controladorDeErros,
-                    this.controladorDeLetrasJaDigitadas);
+                this.palavraSorteada,
+                this.tracinhos,
+                this.controladorDeErros,
+                this.controladorDeLetrasJaDigitadas);
 
             jogador.receba(ComunicadoDeInicio);
           }
 
           jogadores.get(0).receba(new ComunicadoSeuTurno(
-                  this.palavraSorteada,
-                  this.tracinhos,
-                  this.controladorDeErros,
-                  this.controladorDeLetrasJaDigitadas));
+              this.palavraSorteada,
+              this.tracinhos,
+              this.controladorDeErros,
+              this.controladorDeLetrasJaDigitadas));
         }
 
         else if (this.jogadores.size() > 3)
@@ -125,10 +125,9 @@ public class SupervisoraDeConexao extends Thread {
         else if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
           synchronized (this.jogadores) {
             for (Parceiro jogador : this.jogadores)
-                jogador.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
+              jogador.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
           }
-        }
-        else if (comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) {
+        } else if (comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) {
           synchronized (this.jogadores) {
             for (Parceiro jogador : this.jogadores)
               jogador.receba(new ComunicadoDeDerrotaPorAtingirMaximoDeErros());
@@ -138,7 +137,7 @@ public class SupervisoraDeConexao extends Thread {
         else if (comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) {
           synchronized (this.jogadores) {
             for (Parceiro jogador : this.jogadores)
-                jogador.receba(new ComunicadoDeDerrotaPorErrarPalavra());
+              jogador.receba(new ComunicadoDeDerrotaPorErrarPalavra());
 
             if (this.jogadores.size() == 1)
               jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverJogadores());
@@ -148,17 +147,17 @@ public class SupervisoraDeConexao extends Thread {
 
               if (jogadorDaVez < this.jogadores.size() - 1)
                 jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno(
-                        this.palavraSorteada,
-                        this.tracinhos,
-                        this.controladorDeErros,
-                        this.controladorDeLetrasJaDigitadas));
+                    this.palavraSorteada,
+                    this.tracinhos,
+                    this.controladorDeErros,
+                    this.controladorDeLetrasJaDigitadas));
 
               else
                 jogadores.get(0).receba(new ComunicadoSeuTurno(
-                        this.palavraSorteada,
-                        this.tracinhos,
-                        this.controladorDeErros,
-                        this.controladorDeLetrasJaDigitadas));
+                    this.palavraSorteada,
+                    this.tracinhos,
+                    this.controladorDeErros,
+                    this.controladorDeLetrasJaDigitadas));
             }
           }
         }
@@ -169,17 +168,17 @@ public class SupervisoraDeConexao extends Thread {
 
             if (jogadorDaVez < this.jogadores.size() - 1)
               jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno(
-                      this.palavraSorteada,
-                      this.tracinhos,
-                      this.controladorDeErros,
-                      this.controladorDeLetrasJaDigitadas));
+                  this.palavraSorteada,
+                  this.tracinhos,
+                  this.controladorDeErros,
+                  this.controladorDeLetrasJaDigitadas));
 
             else
               jogadores.get(0).receba(new ComunicadoSeuTurno(
-                      this.palavraSorteada,
-                      this.tracinhos,
-                      this.controladorDeErros,
-                      this.controladorDeLetrasJaDigitadas));
+                  this.palavraSorteada,
+                  this.tracinhos,
+                  this.controladorDeErros,
+                  this.controladorDeLetrasJaDigitadas));
           }
         }
         // pedido para sair

@@ -7,7 +7,7 @@ public class ComunicadoSeuTurno extends Comunicado {
     private ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas;
 
     public ComunicadoSeuTurno(Palavra palavra, Tracinhos tracinhos, ControladorDeErros controladorDeErros,
-                             ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
+            ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
         this.palavra = palavra;
         this.tracinhos = tracinhos;
         this.controladorDeErros = controladorDeErros;

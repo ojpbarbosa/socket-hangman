@@ -1,9 +1,7 @@
 package com.company;
 
-public class BancoDePalavras extends Comunicado
-{
-    private static String[] palavras = 
-    {
+public class BancoDePalavras extends Comunicado {
+    private static String[] palavras = {
             "ADOLESCÊNCIA",
             "AMARELO",
             "ANDORINHA",
@@ -106,18 +104,13 @@ public class BancoDePalavras extends Comunicado
             "XADREZ",
     };
 
-    public static Palavra getPalavraSorteada ()
-    {
+    public static Palavra getPalavraSorteada() {
         Palavra palavra = null;
 
-        try
-        {
-            palavra =
-            new Palavra (BancoDePalavras.palavras[
-            (int)(Math.random() * BancoDePalavras.palavras.length)]);
+        try {
+            palavra = new Palavra(BancoDePalavras.palavras[(int) (Math.random() * BancoDePalavras.palavras.length)]);
+        } catch (Exception e) {
         }
-        catch (Exception e)
-        {}
 
         return palavra;
     }

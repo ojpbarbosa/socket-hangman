@@ -72,9 +72,8 @@ public class Cliente {
       Comunicado comunicado = null;
       do {
         comunicado = (Comunicado) servidor.espie();
-      } while (
-              !(comunicado instanceof ComunicadoDeInicio) &&
-              !(comunicado instanceof ComunicadoDeServidorCheio));
+      } while (!(comunicado instanceof ComunicadoDeInicio) &&
+          !(comunicado instanceof ComunicadoDeServidorCheio));
 
       comunicado = servidor.envie();
 
@@ -100,12 +99,11 @@ public class Cliente {
       comunicado = null;
       do {
         comunicado = servidor.espie();
-      } while (
-              !(comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) &&
-              !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverJogadores) &&
-              !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
-              !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
-              !(comunicado instanceof ComunicadoSeuTurno));
+      } while (!(comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) &&
+          !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverJogadores) &&
+          !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
+          !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
+          !(comunicado instanceof ComunicadoSeuTurno));
       comunicado = servidor.envie();
 
       if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
@@ -153,8 +151,8 @@ public class Cliente {
           String opcao;
           do {
             System.out
-                    .println(
-                            "Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [T]erminar o jogo?");
+                .println(
+                    "Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [T]erminar o jogo?");
             System.out.print("Escolha uma opcao: ");
             opcao = Teclado.getUmString().toUpperCase();
           } while (!opcao.equals("P") && !opcao.equals("L") && !opcao.equals("T"));
@@ -238,7 +236,8 @@ public class Cliente {
                 tracinhos = comunicadoDeRevelacao.getTracinhos();
                 if (!tracinhos.isAindaComTracinhos()) {
                   servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
-                  System.out.println("Parabéns!!! Voce acertou a palavra, que era " + palavraSorteada + ", e consequentemente GANHOU O JOGO!");
+                  System.out.println("Parabéns!!! Voce acertou a palavra, que era " + palavraSorteada
+                      + ", e consequentemente GANHOU O JOGO!");
                   jogando = false;
                 }
               }
