@@ -1,13 +1,13 @@
 package com.company;
 
-public class ComunicadoDeDados extends Comunicado {
+public class ComunicadoDeInicio extends Comunicado {
     private Palavra palavra;
     private Tracinhos tracinhos;
     private ControladorDeErros controladorDeErros;
     private ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas;
 
-    public ComunicadoDeDados(Palavra palavra, Tracinhos tracinhos, ControladorDeErros controladorDeErros,
-                             ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
+    public ComunicadoDeInicio(Palavra palavra, Tracinhos tracinhos, ControladorDeErros controladorDeErros,
+                              ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
         this.palavra = palavra;
         this.tracinhos = tracinhos;
         this.controladorDeErros = controladorDeErros;

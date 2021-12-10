@@ -87,10 +87,25 @@ public class Cliente3 {
     boolean jogando = true;
     Comunicado comunicado = null;
     do {
-      comunicado = (Comunicado) servidor.espie();
+      comunicado = null;
+      do {
+        comunicado = servidor.espie();
+      } while (
+              !(comunicado instanceof ComunicadoGanhouPorAcertarPalavra) &&
+                      !(comunicado instanceof ComunicadoPerdeuPorAtingirMaximoDeErros) &&
+                      !(comunicado instanceof ComunicadoPerdeuPorErrarPalavra) &&
+                      !(comunicado instanceof ComunicadoSeuTurno));
+      comunicado = servidor.envie();
 
       if (comunicado instanceof ComunicadoGanhouPorAcertarPalavra) {
         System.out.println("Oh, nao! Um outro jogador ganhou por acertar a palavra!");
+        System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
+        jogando = false;
+      }
+
+      else if (comunicado instanceof ComunicadoPerdeuPorAtingirMaximoDeErros) {
+        System.out.println("Oh, nao! Um outro atingiu o maximo de erros!");
+        System.out.println("A pessoa aa que voces estavam tentando salvar foi enforcada x(");
         System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
         jogando = false;
       }
@@ -112,6 +127,8 @@ public class Cliente3 {
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
         ControladorDeErros erros = dadosDaForca.getControladorDeErros();
         ControladorDeLetrasJaDigitadas letrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
+
+        servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
 
         System.out.println("Palavra......: " + tracinhos.toString());
         System.out.println("Digitadas....: " + letrasJaDigitadas.toString());
@@ -150,9 +167,7 @@ public class Cliente3 {
             // verifica se uma letra já foi digitada
             boolean isJaDigitada = false;
             try {
-              comunicado = servidor.envie();
               servidor.receba(new ComunicadoDeLetraJaDigitada(letra));
-              comunicado = null;
               do {
                 comunicado = (Comunicado) servidor.espie();
               } while (!(comunicado instanceof ComunicadoDeLetraJaDigitada));
@@ -162,7 +177,7 @@ public class Cliente3 {
             }
 
             if (isJaDigitada)
-              System.out.println("Essa letra ja foi digitada!\n");
+              System.err.println("\nEssa letra ja foi digitada!");
             else {
               servidor.receba(new PedidoDeRegistroDeLetra(letra));
 
@@ -171,12 +186,15 @@ public class Cliente3 {
               if (qtdDeAparicoes == 0) {
                 System.err.println("A palavra nao tem a letra '" + letra + "'!\n");
 
-                servidor.receba(new PedidoDeMaximoDeErros(false));
+                servidor.receba(new PedidoDeRegistroDeErro());
+
+                servidor.receba(new PedidoDeMaximoDeErros());
                 comunicado = null;
                 do {
                   comunicado = (Comunicado) servidor.espie();
-                } while (!(comunicado instanceof PedidoDeMaximoDeErros));
-                boolean isAtingidoMaximoDeErros = ((PedidoDeMaximoDeErros) comunicado).isAtingidoMaximoDeErros();
+                } while (!(comunicado instanceof ComunicadoDeMaximoDeErros));
+                comunicado = servidor.envie();
+                boolean isAtingidoMaximoDeErros = ((ComunicadoDeMaximoDeErros) comunicado).isAtingidoMaximoDeErros();
 
                 if (isAtingidoMaximoDeErros) {
                   System.out.println("E com esse erro você perdeu todas suas chances de acertar uma letra :(\n");
@@ -184,20 +202,27 @@ public class Cliente3 {
 
                   servidor.receba(new ComunicadoPerdeuPorAtingirMaximoDeErros());
                   jogando = false;
-                } else
-                  servidor.receba(new PedidoDeRegistroDeErro());
+                }
               } else {
                 System.out.println("\nA palavra tem a letra '" + letra + "'!");
 
+                ComunicadoDeRevelacao comunicadoDeRevelacao = null;
                 for (int i = 0; i < qtdDeAparicoes; i++) {
                   int posicao = palavraSorteada.getPosicaoDaIezimaOcorrencia(i, letra);
 
                   servidor.receba(new PedidoDeRevelacao(posicao, letra));
+                  comunicado = null;
+                  do {
+                    comunicado = (Comunicado) servidor.espie();
+                  } while (!(comunicado instanceof ComunicadoDeRevelacao));
+                  comunicado = servidor.envie();
+                  comunicadoDeRevelacao = ((ComunicadoDeRevelacao) comunicado);
                 }
 
+                tracinhos = comunicadoDeRevelacao.getTracinhos();
                 if (!tracinhos.isAindaComTracinhos()) {
                   servidor.receba(new ComunicadoGanhouPorAcertarPalavra());
-                  System.out.println("Parabéns!!! Você acertou a palavra, que era " + palavraSorteada + " e consequentemente GANHOU O JOGO!");
+                  System.out.println("Parabéns!!! Você acertou a palavra, que era " + palavraSorteada + ", e consequentemente GANHOU O JOGO!");
                   jogando = false;
                 }
               }
@@ -209,7 +234,7 @@ public class Cliente3 {
         if (jogando)
           System.out.println("\nOutro jogador ira jogar agora!\n");
 
-        servidor.receba(new ComunicadoFimDeTurno(palavraSorteada, tracinhos, erros, letrasJaDigitadas));
+        servidor.receba(new ComunicadoFimDeTurno());
       }
     } while (jogando);
 
