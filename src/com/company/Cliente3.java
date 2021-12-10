@@ -65,22 +65,32 @@ public class Cliente3 {
     } // sei que servidor foi instanciado
     tratadoraDeComunicadoDeDesligamento.start();
 
-    ComunicadoComecar dadosDaForca = null;
+    ComunicadoDeInicio dadosDaForca = null;
     try {
       System.out.println("\nConectado!\n");
       System.out.println("Aguardando outros 2 adversários...");
       Comunicado comunicado = null;
       do {
         comunicado = (Comunicado) servidor.espie();
-      } while (!(comunicado instanceof ComunicadoComecar));
+      } while (
+              !(comunicado instanceof ComunicadoDeInicio) &&
+                      !(comunicado instanceof ComunicadoDeServidorCheio));
+
       comunicado = servidor.envie();
-      dadosDaForca = (ComunicadoComecar) comunicado;
+
+      if (comunicado instanceof ComunicadoDeInicio)
+        dadosDaForca = (ComunicadoDeInicio) comunicado;
+
+      else {
+        System.err.println("\n:( O servidor esta cheio;");
+        System.out.println("volte para outro jogo!");
+        servidor.receba(new PedidoParaSair());
+        System.exit(0);
+      }
     } catch (Exception erro) {
     }
 
     System.out.println("\nSua partida está sendo iniciada!\n");
-
-    System.out.println(((Palavra)dadosDaForca.getPalavra()).toString()); ///////////////////////
 
     servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
 
@@ -91,33 +101,38 @@ public class Cliente3 {
       do {
         comunicado = servidor.espie();
       } while (
-              !(comunicado instanceof ComunicadoGanhouPorAcertarPalavra) &&
-                      !(comunicado instanceof ComunicadoPerdeuPorAtingirMaximoDeErros) &&
-                      !(comunicado instanceof ComunicadoPerdeuPorErrarPalavra) &&
+              !(comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) &&
+                      !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverJogadores) &&
+                      !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
+                      !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
                       !(comunicado instanceof ComunicadoSeuTurno));
       comunicado = servidor.envie();
 
-      if (comunicado instanceof ComunicadoGanhouPorAcertarPalavra) {
-        System.out.println("Oh, nao! Um outro jogador ganhou por acertar a palavra!");
+      if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
+        System.out.println("\nOh, nao! Um jogador ganhou por acertar a palavra!");
         System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
         jogando = false;
       }
 
-      else if (comunicado instanceof ComunicadoPerdeuPorAtingirMaximoDeErros) {
-        System.out.println("Oh, nao! Um outro atingiu o maximo de erros!");
+      else if (comunicado instanceof ComunicadoDeVitoriaPorNaoHaverJogadores) {
+        System.out.println("\nParabens!!! Voce eh o unico jogador restante e consequentemente GANHOU O JOGO!");
+        jogando = false;
+      }
+
+      else if (comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) {
+        System.out.println("\nOh, nao! Um jogador atingiu o maximo de erros!");
         System.out.println("A pessoa aa que voces estavam tentando salvar foi enforcada x(");
         System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
         jogando = false;
       }
 
-      else if (comunicado instanceof ComunicadoPerdeuPorErrarPalavra)
-        System.out.println("Oh, nao! Um outro jogador foi eliminado por tentar acertar a palavra e errar!");
+      else if (comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra)
+        System.out.println("\nOh, nao! Um outro jogador foi eliminado por tentar acertar a palavra e errar!");
 
       else if (comunicado instanceof ComunicadoSeuTurno) {
         System.out.println("Sua vez de jogar!\n");
 
         ComunicadoSeuTurno cst = (ComunicadoSeuTurno) comunicado;
-
         dadosDaForca.setPalavra(cst.getPalavra());
         dadosDaForca.setTracinhos(cst.getTracinhos());
         dadosDaForca.setControladorDeErros(cst.getControladorDeErros());
@@ -149,15 +164,15 @@ public class Cliente3 {
             Palavra palavraAdivinhada = new Palavra(Teclado.getUmString().toUpperCase());
 
             if (palavraSorteada.compareTo(palavraAdivinhada) == 0) {
-              System.out.println("Parabéns!!! Você acertou a palavra e consequentemente GANHOU O JOGO!");
-              servidor.receba(new ComunicadoGanhouPorAcertarPalavra());
+              System.out.println("Parabens!!! Voce acertou a palavra e consequentemente GANHOU O JOGO!");
+              servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
               jogando = false;
             } else {
-              System.out.println("Que pena, você errou a palavra\n");
+              System.out.println("Que pena, voce errou a palavra\n");
               System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
               System.out.println("Adeus.......");
 
-              servidor.receba(new ComunicadoPerdeuPorErrarPalavra(palavraSorteada, tracinhos, erros, letrasJaDigitadas));
+              servidor.receba(new ComunicadoDeDerrotaPorErrarPalavra());
               jogando = false;
             }
           } else if (opcao.equals("L")) {
@@ -177,14 +192,14 @@ public class Cliente3 {
             }
 
             if (isJaDigitada)
-              System.err.println("\nEssa letra ja foi digitada!");
+              System.err.println("Essa letra ja foi digitada!\n");
             else {
               servidor.receba(new PedidoDeRegistroDeLetra(letra));
 
               int qtdDeAparicoes = palavraSorteada.getQuantidade(letra);
 
               if (qtdDeAparicoes == 0) {
-                System.err.println("A palavra nao tem a letra '" + letra + "'!\n");
+                System.err.println("\nA palavra nao tem a letra '" + letra + "'!");
 
                 servidor.receba(new PedidoDeRegistroDeErro());
 
@@ -197,10 +212,11 @@ public class Cliente3 {
                 boolean isAtingidoMaximoDeErros = ((ComunicadoDeMaximoDeErros) comunicado).isAtingidoMaximoDeErros();
 
                 if (isAtingidoMaximoDeErros) {
-                  System.out.println("E com esse erro você perdeu todas suas chances de acertar uma letra :(\n");
+                  System.out.println("\nE com esse erro voce perdeu todas suas chances de acertar uma letra :(\n");
+                  System.out.println("A palavra era: " + palavraSorteada);
                   System.out.println("Adeus.......");
 
-                  servidor.receba(new ComunicadoPerdeuPorAtingirMaximoDeErros());
+                  servidor.receba(new ComunicadoDeDerrotaPorAtingirMaximoDeErros());
                   jogando = false;
                 }
               } else {
@@ -221,8 +237,8 @@ public class Cliente3 {
 
                 tracinhos = comunicadoDeRevelacao.getTracinhos();
                 if (!tracinhos.isAindaComTracinhos()) {
-                  servidor.receba(new ComunicadoGanhouPorAcertarPalavra());
-                  System.out.println("Parabéns!!! Você acertou a palavra, que era " + palavraSorteada + ", e consequentemente GANHOU O JOGO!");
+                  servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
+                  System.out.println("Parabéns!!! Voce acertou a palavra, que era " + palavraSorteada + ", e consequentemente GANHOU O JOGO!");
                   jogando = false;
                 }
               }
@@ -232,7 +248,7 @@ public class Cliente3 {
         } catch (Exception erro) {
         }
         if (jogando)
-          System.out.println("\nOutro jogador ira jogar agora!\n");
+          System.out.println("\nOutro jogador ira jogar agora!");
 
         servidor.receba(new ComunicadoFimDeTurno());
       }
@@ -243,7 +259,7 @@ public class Cliente3 {
     } catch (Exception erro) {
     }
 
-    System.out.println("Obrigado por jogar!");
+    System.out.println("\nObrigado por jogar!");
     System.exit(0);
   }
 }

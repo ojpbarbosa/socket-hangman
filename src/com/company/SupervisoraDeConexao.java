@@ -60,13 +60,13 @@ public class SupervisoraDeConexao extends Thread {
           this.controladorDeErros = new ControladorDeErros((int) (this.palavraSorteada.getTamanho() * 0.6));
 
           for (Parceiro jogador : this.jogadores) {
-            ComunicadoComecar comunicadoComecar = new ComunicadoComecar(
+            ComunicadoDeInicio ComunicadoDeInicio = new ComunicadoDeInicio(
                     this.palavraSorteada,
                     this.tracinhos,
                     this.controladorDeErros,
                     this.controladorDeLetrasJaDigitadas);
 
-            jogador.receba(comunicadoComecar);
+            jogador.receba(ComunicadoDeInicio);
           }
 
           jogadores.get(0).receba(new ComunicadoSeuTurno(
@@ -75,6 +75,9 @@ public class SupervisoraDeConexao extends Thread {
                   this.controladorDeErros,
                   this.controladorDeLetrasJaDigitadas));
         }
+
+        else if (this.jogadores.size() > 3)
+          this.jogador.receba(new ComunicadoDeServidorCheio());
       }
 
       for (;;) {
@@ -119,42 +122,48 @@ public class SupervisoraDeConexao extends Thread {
           this.jogador.receba(new ComunicadoDeRevelacao(this.tracinhos));
         }
         // comunicado ganhou por acertar a palavra
-        else if (comunicado instanceof ComunicadoGanhouPorAcertarPalavra) {
+        else if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
           synchronized (this.jogadores) {
             for (Parceiro jogador : this.jogadores)
-                jogador.receba(new ComunicadoGanhouPorAcertarPalavra());
+                jogador.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
           }
         }
-        else if (comunicado instanceof ComunicadoPerdeuPorAtingirMaximoDeErros) {
+        else if (comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) {
           synchronized (this.jogadores) {
             for (Parceiro jogador : this.jogadores)
-              jogador.receba(new ComunicadoPerdeuPorAtingirMaximoDeErros());
+              jogador.receba(new ComunicadoDeDerrotaPorAtingirMaximoDeErros());
           }
         }
         // comunicado perdeu por errar a palavra
-        else if (comunicado instanceof ComunicadoPerdeuPorErrarPalavra cpep) {
+        else if (comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) {
           synchronized (this.jogadores) {
             for (Parceiro jogador : this.jogadores)
-                jogador.receba(new ComunicadoPerdeuPorErrarPalavra(null, null, null, null));
+                jogador.receba(new ComunicadoDeDerrotaPorErrarPalavra());
 
-            int jogadorDaVez = this.jogadores.indexOf(jogador);
+            if (this.jogadores.size() == 1)
+              jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverJogadores());
 
-            if (jogadorDaVez < this.jogadores.size() - 1)
-              jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno(
-                      cpep.getPalavra(),
-                      cpep.getTracinhos(),
-                      cpep.getControladorDeErros(),
-                      cpep.getControladorDeLetrasJaDigitadas()));
-            else
-              jogadores.get(0).receba(new ComunicadoSeuTurno(
-                      cpep.getPalavra(),
-                      cpep.getTracinhos(),
-                      cpep.getControladorDeErros(),
-                      cpep.getControladorDeLetrasJaDigitadas()));
+            else {
+              int jogadorDaVez = this.jogadores.indexOf(jogador);
+
+              if (jogadorDaVez < this.jogadores.size() - 1)
+                jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno(
+                        this.palavraSorteada,
+                        this.tracinhos,
+                        this.controladorDeErros,
+                        this.controladorDeLetrasJaDigitadas));
+
+              else
+                jogadores.get(0).receba(new ComunicadoSeuTurno(
+                        this.palavraSorteada,
+                        this.tracinhos,
+                        this.controladorDeErros,
+                        this.controladorDeLetrasJaDigitadas));
+            }
           }
         }
         // comunicado fim de turno
-        else if (comunicado instanceof ComunicadoFimDeTurno cft) {
+        else if (comunicado instanceof ComunicadoFimDeTurno) {
           synchronized (this.jogadores) {
             int jogadorDaVez = this.jogadores.indexOf(jogador);
 
@@ -164,6 +173,7 @@ public class SupervisoraDeConexao extends Thread {
                       this.tracinhos,
                       this.controladorDeErros,
                       this.controladorDeLetrasJaDigitadas));
+
             else
               jogadores.get(0).receba(new ComunicadoSeuTurno(
                       this.palavraSorteada,
@@ -176,6 +186,9 @@ public class SupervisoraDeConexao extends Thread {
         else if (comunicado instanceof PedidoParaSair) {
           synchronized (this.jogadores) {
             this.jogadores.remove(this.jogador);
+
+            if (this.jogadores.size() == 1)
+              jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverJogadores());
           }
           this.jogador.adeus();
         }
@@ -186,8 +199,6 @@ public class SupervisoraDeConexao extends Thread {
         receptor.close();
       } catch (Exception falha) {
       }
-
-      System.err.println();
 
       return;
     }

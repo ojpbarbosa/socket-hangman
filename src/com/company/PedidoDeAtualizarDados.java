@@ -6,7 +6,7 @@ public class PedidoDeAtualizarDados extends Comunicado {
   private ControladorDeErros controladorDeErros;
   private ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas;
 
-  public PedidoDeAtualizarDados(ComunicadoComecar dadosDaForca) {
+  public PedidoDeAtualizarDados(ComunicadoDeInicio dadosDaForca) {
     this.palavra = dadosDaForca.getPalavra();
     this.tracinhos = dadosDaForca.getTracinhos();
     this.controladorDeErros = dadosDaForca.getControladorDeErros();
