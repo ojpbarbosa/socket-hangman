@@ -103,7 +103,7 @@ public class Cliente2 {
               !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverJogadores) &&
               !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
               !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
-              !(comunicado instanceof ComunicadoSeuTurno));
+              !(comunicado instanceof ComunicadoDeSeuTurno));
       comunicado = servidor.envie();
 
       if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
@@ -119,7 +119,7 @@ public class Cliente2 {
 
       else if (comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) {
         System.out.println("\nOh, nao! Um jogador atingiu o maximo de erros!");
-        System.out.println("A pessoa aa que voces estavam tentando salvar foi enforcada x(");
+        System.out.println("A pessoa a que voces estavam tentando salvar foi enforcada x(");
         System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
         jogando = false;
       }
@@ -127,10 +127,10 @@ public class Cliente2 {
       else if (comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra)
         System.out.println("\nOh, nao! Um outro jogador foi eliminado por tentar acertar a palavra e errar!");
 
-      else if (comunicado instanceof ComunicadoSeuTurno) {
-        System.out.println("Sua vez de jogar!\n");
+      else if (comunicado instanceof ComunicadoDeSeuTurno) {
+        System.out.println("\nSua vez de jogar!\n");
 
-        ComunicadoSeuTurno cst = (ComunicadoSeuTurno) comunicado;
+        ComunicadoDeSeuTurno cst = (ComunicadoDeSeuTurno) comunicado;
         dadosDaForca.setPalavra(cst.getPalavra());
         dadosDaForca.setTracinhos(cst.getTracinhos());
         dadosDaForca.setControladorDeErros(cst.getControladorDeErros());
@@ -138,14 +138,14 @@ public class Cliente2 {
 
         Palavra palavra = dadosDaForca.getPalavra();
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
-        ControladorDeErros erros = dadosDaForca.getControladorDeErros();
-        ControladorDeLetrasJaDigitadas letrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
+        ControladorDeErros controladorDeErros = dadosDaForca.getControladorDeErros();
+        ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
 
         servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
 
-        System.out.println("Palavra......: " + tracinhos.toString());
-        System.out.println("Digitadas....: " + letrasJaDigitadas.toString());
-        System.out.println("Erros........: " + erros.toString());
+        System.out.println("Palavra......: " + tracinhos);
+        System.out.println("Digitadas....: " + controladorDeLetrasJaDigitadas);
+        System.out.println("Erros........: " + controladorDeErros);
 
         try {
           String opcao;
@@ -249,7 +249,7 @@ public class Cliente2 {
         if (jogando)
           System.out.println("\nOutro jogador ira jogar agora!");
 
-        servidor.receba(new ComunicadoFimDeTurno());
+        servidor.receba(new ComunicadoDeFimDeTurno());
       }
     } while (jogando);
 
