@@ -140,7 +140,7 @@ public class SupervisoraDeConexao extends Thread {
               jogador.receba(new ComunicadoDeDerrotaPorErrarPalavra());
 
             if (this.jogadores.size() == 1)
-              jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverJogadores());
+              jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverMaisJogadores());
           }
         }
 
@@ -169,7 +169,7 @@ public class SupervisoraDeConexao extends Thread {
             this.jogadores.remove(this.jogador);
 
             if (this.jogadores.size() == 1)
-              jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverJogadores());
+              jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverMaisJogadores());
           }
           this.jogador.adeus();
         }

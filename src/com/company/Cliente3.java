@@ -100,7 +100,7 @@ public class Cliente3 {
       do {
         comunicado = servidor.espie();
       } while (!(comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) &&
-              !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverJogadores) &&
+              !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverMaisJogadores) &&
               !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
               !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
               !(comunicado instanceof ComunicadoDeSeuTurno));
@@ -112,7 +112,7 @@ public class Cliente3 {
         jogando = false;
       }
 
-      else if (comunicado instanceof ComunicadoDeVitoriaPorNaoHaverJogadores) {
+      else if (comunicado instanceof ComunicadoDeVitoriaPorNaoHaverMaisJogadores) {
         System.out.println("\nParabens!!! Voce eh o unico jogador restante e consequentemente GANHOU O JOGO!");
         jogando = false;
       }
