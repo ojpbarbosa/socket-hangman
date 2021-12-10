@@ -69,7 +69,7 @@ public class SupervisoraDeConexao extends Thread {
             jogador.receba(ComunicadoDeInicio);
           }
 
-          jogadores.get(0).receba(new ComunicadoSeuTurno(
+          jogadores.get(0).receba(new ComunicadoDeSeuTurno(
               this.palavra,
               this.tracinhos,
               this.controladorDeErros,
@@ -100,9 +100,7 @@ public class SupervisoraDeConexao extends Thread {
         }
 
         else if (comunicado instanceof PedidoDeRegistroDeLetra prl) {
-          char letra = prl.getLetra();
-
-          this.controladorDeLetrasJaDigitadas.registre(letra);
+          this.controladorDeLetrasJaDigitadas.registre(prl.getLetra());
         }
 
         else if (comunicado instanceof PedidoDeMaximoDeErros) {
@@ -143,40 +141,22 @@ public class SupervisoraDeConexao extends Thread {
 
             if (this.jogadores.size() == 1)
               jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverJogadores());
-
-            else {
-              int jogadorDaVez = this.jogadores.indexOf(jogador);
-
-              if (jogadorDaVez < this.jogadores.size() - 1)
-                jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno(
-                    this.palavra,
-                    this.tracinhos,
-                    this.controladorDeErros,
-                    this.controladorDeLetrasJaDigitadas));
-
-              else
-                jogadores.get(0).receba(new ComunicadoSeuTurno(
-                    this.palavra,
-                    this.tracinhos,
-                    this.controladorDeErros,
-                    this.controladorDeLetrasJaDigitadas));
-            }
           }
         }
 
-        else if (comunicado instanceof ComunicadoFimDeTurno) {
+        else if (comunicado instanceof ComunicadoDeFimDeTurno) {
           synchronized (this.jogadores) {
             int jogadorDaVez = this.jogadores.indexOf(jogador);
 
             if (jogadorDaVez < this.jogadores.size() - 1)
-              jogadores.get(jogadorDaVez + 1).receba(new ComunicadoSeuTurno(
+              jogadores.get(jogadorDaVez + 1).receba(new ComunicadoDeSeuTurno(
                   this.palavra,
                   this.tracinhos,
                   this.controladorDeErros,
                   this.controladorDeLetrasJaDigitadas));
 
             else
-              jogadores.get(0).receba(new ComunicadoSeuTurno(
+              jogadores.get(0).receba(new ComunicadoDeSeuTurno(
                   this.palavra,
                   this.tracinhos,
                   this.controladorDeErros,
