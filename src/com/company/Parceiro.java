@@ -8,8 +8,6 @@ public class Parceiro {
     private Socket conexao;
     private ObjectInputStream receptor;
     private ObjectOutputStream transmissor;
-    private String nome;
-    private char letraEnviada;
 
     private Comunicado proximoComunicado = null;
 
@@ -61,28 +59,6 @@ public class Parceiro {
         } catch (Exception erro) {
             throw new Exception("Erro de recepcao");
         }
-    }
-
-    public void setLetraEnviada(char letra) throws Exception {
-        if (letra == '\0')
-            throw new Exception("Letra ausente");
-
-        this.letraEnviada = letra;
-    }
-
-    public void setNome(String nome) throws Exception {
-        if (nome == null)
-            throw new Exception("Nome ausente");
-
-        this.nome = nome;
-    }
-
-    public char getLetraEnviada() {
-        return this.letraEnviada;
-    }
-
-    public String getNome() {
-        return this.nome;
     }
 
     public void adeus() throws Exception {
