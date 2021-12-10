@@ -73,7 +73,7 @@ public class Cliente2 {
       do {
         comunicado = (Comunicado) servidor.espie();
       } while (!(comunicado instanceof ComunicadoDeInicio) &&
-          !(comunicado instanceof ComunicadoDeServidorCheio));
+              !(comunicado instanceof ComunicadoDeServidorCheio));
 
       comunicado = servidor.envie();
 
@@ -100,10 +100,10 @@ public class Cliente2 {
       do {
         comunicado = servidor.espie();
       } while (!(comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) &&
-          !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverJogadores) &&
-          !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
-          !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
-          !(comunicado instanceof ComunicadoSeuTurno));
+              !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverJogadores) &&
+              !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
+              !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
+              !(comunicado instanceof ComunicadoSeuTurno));
       comunicado = servidor.envie();
 
       if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
@@ -136,7 +136,7 @@ public class Cliente2 {
         dadosDaForca.setControladorDeErros(cst.getControladorDeErros());
         dadosDaForca.setControladorDeLetrasJaDigitadas(cst.getControladorDeLetrasJaDigitadas());
 
-        Palavra palavraSorteada = dadosDaForca.getPalavra();
+        Palavra palavra = dadosDaForca.getPalavra();
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
         ControladorDeErros erros = dadosDaForca.getControladorDeErros();
         ControladorDeLetrasJaDigitadas letrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
@@ -151,8 +151,8 @@ public class Cliente2 {
           String opcao;
           do {
             System.out
-                .println(
-                    "Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [T]erminar o jogo?");
+                    .println(
+                            "Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [T]erminar o jogo?");
             System.out.print("Escolha uma opcao: ");
             opcao = Teclado.getUmString().toUpperCase();
           } while (!opcao.equals("P") && !opcao.equals("L") && !opcao.equals("T"));
@@ -161,7 +161,7 @@ public class Cliente2 {
             System.out.print("Qual é a palavra ? ");
             Palavra palavraAdivinhada = new Palavra(Teclado.getUmString().toUpperCase());
 
-            if (palavraSorteada.compareTo(palavraAdivinhada) == 0) {
+            if (palavra.compareTo(palavraAdivinhada) == 0) {
               System.out.println("Parabens!!! Voce acertou a palavra e consequentemente GANHOU O JOGO!");
               servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
               jogando = false;
@@ -194,7 +194,7 @@ public class Cliente2 {
             else {
               servidor.receba(new PedidoDeRegistroDeLetra(letra));
 
-              int qtdDeAparicoes = palavraSorteada.getQuantidade(letra);
+              int qtdDeAparicoes = palavra.getQuantidade(letra);
 
               if (qtdDeAparicoes == 0) {
                 System.err.println("\nA palavra nao tem a letra '" + letra + "'!");
@@ -211,7 +211,7 @@ public class Cliente2 {
 
                 if (isAtingidoMaximoDeErros) {
                   System.out.println("\nE com esse erro voce perdeu todas suas chances de acertar uma letra :(\n");
-                  System.out.println("A palavra era: " + palavraSorteada);
+                  System.out.println("A palavra era " + palavra + "!");
                   System.out.println("Adeus.......");
 
                   servidor.receba(new ComunicadoDeDerrotaPorAtingirMaximoDeErros());
@@ -222,7 +222,7 @@ public class Cliente2 {
 
                 ComunicadoDeRevelacao comunicadoDeRevelacao = null;
                 for (int i = 0; i < qtdDeAparicoes; i++) {
-                  int posicao = palavraSorteada.getPosicaoDaIezimaOcorrencia(i, letra);
+                  int posicao = palavra.getPosicaoDaIezimaOcorrencia(i, letra);
 
                   servidor.receba(new PedidoDeRevelacao(posicao, letra));
                   comunicado = null;
@@ -236,8 +236,8 @@ public class Cliente2 {
                 tracinhos = comunicadoDeRevelacao.getTracinhos();
                 if (!tracinhos.isAindaComTracinhos()) {
                   servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
-                  System.out.println("Parabéns!!! Voce acertou a palavra, que era " + palavraSorteada
-                      + ", e consequentemente GANHOU O JOGO!");
+                  System.out.println("Parabéns!!! Voce acertou a palavra, que era " + palavra
+                          + ", e consequentemente GANHOU O JOGO!");
                   jogando = false;
                 }
               }
