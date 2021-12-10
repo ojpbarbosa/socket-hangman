@@ -1,4 +1,4 @@
 package com.company;
 
-public class ComunicadoFimDeTurno extends Comunicado {
+public class ComunicadoDeFimDeTurno extends Comunicado {
 }
