@@ -1,13 +1,13 @@
 package com.company;
 
-public class ComunicadoDeInicio extends Comunicado {
+public class ComunicadoComecar extends Comunicado {
     private Palavra palavra;
     private Tracinhos tracinhos;
     private ControladorDeErros controladorDeErros;
     private ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas;
 
-    public ComunicadoDeInicio(Palavra palavra, Tracinhos tracinhos, ControladorDeErros controladorDeErros,
-                              ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
+    public ComunicadoComecar(Palavra palavra, Tracinhos tracinhos, ControladorDeErros controladorDeErros,
+                             ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
         this.palavra = palavra;
         this.tracinhos = tracinhos;
         this.controladorDeErros = controladorDeErros;
@@ -28,5 +28,21 @@ public class ComunicadoDeInicio extends Comunicado {
 
     public ControladorDeLetrasJaDigitadas getControladorDeLetrasJaDigitadas() {
         return this.controladorDeLetrasJaDigitadas;
+    }
+
+    public void setPalavra(Palavra palavra) {
+        this.palavra = palavra;
+    }
+
+    public void setTracinhos(Tracinhos tracinhos) {
+        this.tracinhos = tracinhos;
+    }
+
+    public void setControladorDeErros(ControladorDeErros controladorDeErros) {
+        this.controladorDeErros = controladorDeErros;
+    }
+
+    public void setControladorDeLetrasJaDigitadas(ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
+        this.controladorDeLetrasJaDigitadas = controladorDeLetrasJaDigitadas;
     }
 }
