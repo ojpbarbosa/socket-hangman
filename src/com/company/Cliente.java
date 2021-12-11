@@ -78,6 +78,8 @@ public class Cliente {
     } catch (Exception erro) {
     }
 
+    int grupo = dadosDaForca.getGrupo();
+
     System.out.println("\nSua partida está sendo iniciada!");
 
     servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
@@ -153,16 +155,16 @@ public class Cliente {
             if (palavra.compareTo(palavraAdivinhada) == 0) {
               System.out.println("Parabens!!! Voce acertou a palavra e consequentemente GANHOU O JOGO!");
 
-              servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
+              servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra(grupo));
               jogando = false;
             } else {
               System.out.println("Que pena, voce errou a palavra\n");
               System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
               System.out.println("Adeus.......");
 
-              servidor.receba(new ComunicadoDeDerrotaPorErrarPalavra());
+              servidor.receba(new ComunicadoDeDerrotaPorErrarPalavra(grupo));
               try {
-                servidor.receba(new PedidoParaSair());
+                servidor.receba(new PedidoParaSair(grupo));
               } catch (Exception erro) {
               }
               System.out.println("\nObrigado por jogar!");
@@ -209,7 +211,7 @@ public class Cliente {
                   System.out.println("A palavra era " + palavra + "!");
                   System.out.println("Adeus.......");
 
-                  servidor.receba(new ComunicadoDeDerrotaPorAtingirMaximoDeErros());
+                  servidor.receba(new ComunicadoDeDerrotaPorAtingirMaximoDeErros(grupo));
                   jogando = false;
                 }
               } else {
@@ -230,7 +232,7 @@ public class Cliente {
 
                 tracinhos = comunicadoDeRevelacao.getTracinhos();
                 if (!tracinhos.isAindaComTracinhos()) {
-                  servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
+                  servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra(grupo));
                   System.out.println("Parabéns!!! Voce acertou a palavra, que era " + palavra
                           + ", e consequentemente GANHOU O JOGO!");
                   jogando = false;
@@ -244,7 +246,7 @@ public class Cliente {
         if (jogando)
           System.out.println("\nOutro jogador ira jogar agora!");
 
-        servidor.receba(new PedidoDeNumeroDeJogadores());
+        servidor.receba(new PedidoDeNumeroDeJogadores(grupo));
         do {
           comunicado = servidor.espie();
         } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
@@ -252,12 +254,12 @@ public class Cliente {
         int numeroDeJogadores = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores();
 
         if (jogando || (numeroDeJogadores - 1) > 1)
-          servidor.receba(new ComunicadoDeFimDeTurno());
+          servidor.receba(new ComunicadoDeFimDeTurno(grupo));
       }
     } while (jogando);
 
     try {
-      servidor.receba(new PedidoParaSair());
+      servidor.receba(new PedidoParaSair(grupo));
     } catch (Exception erro) {
     }
 

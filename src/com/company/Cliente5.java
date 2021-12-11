@@ -3,7 +3,7 @@ package com.company;
 import java.io.*;
 import java.net.*;
 
-public class Cliente4 {
+public class Cliente5 {
     public static final String HOST_PADRAO = "localhost";
     public static final int PORTA_PADRAO = 3000;
 

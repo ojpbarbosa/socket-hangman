@@ -8,6 +8,7 @@ public class SupervisoraDeConexao extends Thread {
   private Parceiro jogador;
   private Socket conexao;
   private ArrayList<Parceiro> jogadores;
+  private static ArrayList<ArrayList<Parceiro>> grupos = new ArrayList<>();
   private Palavra palavra;
   private Tracinhos tracinhos;
   private ControladorDeErros controladorDeErros;
@@ -53,14 +54,21 @@ public class SupervisoraDeConexao extends Thread {
       synchronized (this.jogadores) {
         this.jogadores.add(this.jogador);
 
-        if (this.jogadores.size() == 3) {
+        if (this.jogadores.size() % 3 == 0) {
+          ArrayList<Parceiro> grupo = new ArrayList<>();
+          for (int i = 3; i > 0; i--)
+            grupo.add(this.jogadores.get(this.jogadores.size() - i));
+
+          grupos.add(grupo);
+
           this.palavra = BancoDePalavras.getPalavraSorteada();
           this.tracinhos = new Tracinhos(this.palavra.getTamanho());
           this.controladorDeLetrasJaDigitadas = new ControladorDeLetrasJaDigitadas();
           this.controladorDeErros = new ControladorDeErros((int) (this.palavra.getTamanho() * 0.6));
 
-          for (Parceiro jogador : this.jogadores) {
+          for (Parceiro jogador : grupo) {
             ComunicadoDeInicio ComunicadoDeInicio = new ComunicadoDeInicio(
+                grupos.indexOf(grupo),
                 this.palavra,
                 this.tracinhos,
                 this.controladorDeErros,
@@ -69,7 +77,7 @@ public class SupervisoraDeConexao extends Thread {
             jogador.receba(ComunicadoDeInicio);
           }
 
-          jogadores.get(0).receba(new ComunicadoDeSeuTurno(
+          grupo.get(0).receba(new ComunicadoDeSeuTurno(
               this.palavra,
               this.tracinhos,
               this.controladorDeErros,
@@ -117,43 +125,51 @@ public class SupervisoraDeConexao extends Thread {
           this.jogador.receba(new ComunicadoDeRevelacao(this.tracinhos));
         }
 
-        else if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
-          synchronized (this.jogadores) {
-            for (Parceiro jogador : this.jogadores)
-              jogador.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
+        else if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra cvap) {
+          ArrayList<Parceiro> grupo = grupos.get(cvap.getGrupo());
+
+          synchronized (grupo) {
+            for (Parceiro jogador : grupo)
+              jogador.receba(new ComunicadoDeVitoriaPorAcertarPalavra(cvap.getGrupo()));
           }
         }
 
-        else if (comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) {
-          synchronized (this.jogadores) {
-            for (Parceiro jogador : this.jogadores)
-              jogador.receba(new ComunicadoDeDerrotaPorAtingirMaximoDeErros());
+        else if (comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros cdame) {
+          ArrayList<Parceiro> grupo = grupos.get(cdame.getGrupo());
+
+          synchronized (grupo) {
+            for (Parceiro jogador : grupo)
+              jogador.receba(new ComunicadoDeDerrotaPorAtingirMaximoDeErros(cdame.getGrupo()));
           }
         }
 
-        else if (comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) {
-          synchronized (this.jogadores) {
-            for (Parceiro jogador : this.jogadores)
-              jogador.receba(new ComunicadoDeDerrotaPorErrarPalavra());
+        else if (comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra cdep) {
+          ArrayList<Parceiro> grupo = grupos.get(cdep.getGrupo());
 
-            if (this.jogadores.size() == 1)
-              jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverMaisJogadores());
+          synchronized (grupo) {
+            for (Parceiro jogador : grupo)
+              jogador.receba(new ComunicadoDeDerrotaPorErrarPalavra(cdep.getGrupo()));
+
+            if (grupo.size() == 1)
+              grupo.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverMaisJogadores());
           }
         }
 
-        else if (comunicado instanceof ComunicadoDeFimDeTurno) {
-          synchronized (this.jogadores) {
-            int jogadorDaVez = this.jogadores.indexOf(jogador);
+        else if (comunicado instanceof ComunicadoDeFimDeTurno cft) {
+          ArrayList<Parceiro> grupo = grupos.get(cft.getGrupo());
 
-            if (jogadorDaVez < this.jogadores.size() - 1)
-              jogadores.get(jogadorDaVez + 1).receba(new ComunicadoDeSeuTurno(
+          synchronized (grupo) {
+            int jogadorDaVez = grupo.indexOf(jogador);
+
+            if (jogadorDaVez < grupo.size() - 1)
+              grupo.get(jogadorDaVez + 1).receba(new ComunicadoDeSeuTurno(
                   this.palavra,
                   this.tracinhos,
                   this.controladorDeErros,
                   this.controladorDeLetrasJaDigitadas));
 
             else
-              jogadores.get(0).receba(new ComunicadoDeSeuTurno(
+              grupo.get(0).receba(new ComunicadoDeSeuTurno(
                   this.palavra,
                   this.tracinhos,
                   this.controladorDeErros,
@@ -161,16 +177,20 @@ public class SupervisoraDeConexao extends Thread {
           }
         }
 
-        else if (comunicado instanceof PedidoDeNumeroDeJogadores) {
-          this.jogador.receba(new ComunicadoDeNumeroDeJogadores(this.jogadores.size()));
+        else if (comunicado instanceof PedidoDeNumeroDeJogadores pnj) {
+          ArrayList<Parceiro> grupo = grupos.get(pnj.getGrupo());
+
+          this.jogador.receba(new ComunicadoDeNumeroDeJogadores(grupo.size()));
         }
 
-        else if (comunicado instanceof PedidoParaSair) {
-          synchronized (this.jogadores) {
-            this.jogadores.remove(this.jogador);
+        else if (comunicado instanceof PedidoParaSair ps) {
+          ArrayList<Parceiro> grupo = grupos.get(ps.getGrupo());
 
-            if (this.jogadores.size() == 1)
-              jogadores.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverMaisJogadores());
+          synchronized (grupo) {
+            grupo.remove(this.jogador);
+
+            if (grupo.size() == 1)
+              grupo.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverMaisJogadores());
           }
           this.jogador.adeus();
         }

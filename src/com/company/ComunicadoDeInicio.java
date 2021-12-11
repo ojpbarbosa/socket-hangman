@@ -1,19 +1,27 @@
 package com.company;
 
 public class ComunicadoDeInicio extends Comunicado {
+    private int grupo;
     private Palavra palavra;
     private Tracinhos tracinhos;
     private ControladorDeErros controladorDeErros;
     private ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas;
 
-    public ComunicadoDeInicio(Palavra palavra,
+    public ComunicadoDeInicio(
+            int grupo,
+            Palavra palavra,
             Tracinhos tracinhos,
             ControladorDeErros controladorDeErros,
             ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas) {
+        this.grupo = grupo;
         this.palavra = palavra;
         this.tracinhos = tracinhos;
         this.controladorDeErros = controladorDeErros;
         this.controladorDeLetrasJaDigitadas = controladorDeLetrasJaDigitadas;
+    }
+
+    public int getGrupo() {
+        return this.grupo;
     }
 
     public Palavra getPalavra() {
