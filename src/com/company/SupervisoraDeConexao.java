@@ -91,49 +91,6 @@ public class SupervisoraDeConexao extends Thread {
         if (comunicado == null)
           return;
 
-        else if (comunicado instanceof PedidoDeAtualizarDados pad) {
-          this.palavra = pad.getPalavra();
-          this.tracinhos = pad.getTracinhos();
-          this.controladorDeErros = pad.getControladorDeErros();
-          this.controladorDeLetrasJaDigitadas = pad.getControladorDeLetrasJaDigitadas();
-        }
-
-        else if (comunicado instanceof ComunicadoDeLetraJaDigitada cljd) {
-          cljd.setJaDigitada(this.controladorDeLetrasJaDigitadas.isJaDigitada(cljd.getLetra()));
-
-          this.jogador.receba(cljd);
-        }
-
-        else if (comunicado instanceof PedidoDeRegistroDeLetra prl) {
-          this.controladorDeLetrasJaDigitadas.registre(prl.getLetra());
-        }
-
-        else if (comunicado instanceof PedidoDeMaximoDeErros) {
-          this.jogador.receba(new ComunicadoDeMaximoDeErros(this.controladorDeErros.isAtingidoMaximoDeErros()));
-        }
-
-        else if (comunicado instanceof PedidoDeRegistroDeErro) {
-          this.controladorDeErros.registreUmErro();
-        }
-
-        else if (comunicado instanceof PedidoDeRevelacao pr) {
-          int posicao = pr.getPosicao();
-          char letra = pr.getLetra();
-
-          this.tracinhos.revele(posicao, letra);
-
-          this.jogador.receba(new ComunicadoDeRevelacao(this.tracinhos));
-        }
-
-        else if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra cvap) {
-          ArrayList<Parceiro> grupo = grupos.get(cvap.getGrupo());
-
-          synchronized (grupo) {
-            for (Parceiro jogador : grupo)
-              jogador.receba(new ComunicadoDeVitoriaPorAcertarPalavra(cvap.getGrupo()));
-          }
-        }
-
         else if (comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros cdame) {
           ArrayList<Parceiro> grupo = grupos.get(cdame.getGrupo());
 
@@ -163,24 +120,67 @@ public class SupervisoraDeConexao extends Thread {
 
             if (jogadorDaVez < grupo.size() - 1)
               grupo.get(jogadorDaVez + 1).receba(new ComunicadoDeSeuTurno(
-                  this.palavra,
-                  this.tracinhos,
-                  this.controladorDeErros,
-                  this.controladorDeLetrasJaDigitadas));
+                      this.palavra,
+                      this.tracinhos,
+                      this.controladorDeErros,
+                      this.controladorDeLetrasJaDigitadas));
 
             else
               grupo.get(0).receba(new ComunicadoDeSeuTurno(
-                  this.palavra,
-                  this.tracinhos,
-                  this.controladorDeErros,
-                  this.controladorDeLetrasJaDigitadas));
+                      this.palavra,
+                      this.tracinhos,
+                      this.controladorDeErros,
+                      this.controladorDeLetrasJaDigitadas));
           }
+        }
+
+        else if (comunicado instanceof ComunicadoDeLetraJaDigitada cljd) {
+          cljd.setJaDigitada(this.controladorDeLetrasJaDigitadas.isJaDigitada(cljd.getLetra()));
+
+          this.jogador.receba(cljd);
+        }
+
+        else if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra cvap) {
+          ArrayList<Parceiro> grupo = grupos.get(cvap.getGrupo());
+
+          synchronized (grupo) {
+            for (Parceiro jogador : grupo)
+              jogador.receba(new ComunicadoDeVitoriaPorAcertarPalavra(cvap.getGrupo()));
+          }
+        }
+
+        else if (comunicado instanceof PedidoDeAtualizarDados pad) {
+          this.palavra = pad.getPalavra();
+          this.tracinhos = pad.getTracinhos();
+          this.controladorDeErros = pad.getControladorDeErros();
+          this.controladorDeLetrasJaDigitadas = pad.getControladorDeLetrasJaDigitadas();
+        }
+
+        else if (comunicado instanceof PedidoDeMaximoDeErros) {
+          this.jogador.receba(new ComunicadoDeMaximoDeErros(this.controladorDeErros.isAtingidoMaximoDeErros()));
         }
 
         else if (comunicado instanceof PedidoDeNumeroDeJogadores pnj) {
           ArrayList<Parceiro> grupo = grupos.get(pnj.getGrupo());
 
           this.jogador.receba(new ComunicadoDeNumeroDeJogadores(grupo.size()));
+        }
+
+        else if (comunicado instanceof PedidoDeRegistroDeErro) {
+          this.controladorDeErros.registreUmErro();
+        }
+
+        else if (comunicado instanceof PedidoDeRegistroDeLetra prl) {
+          this.controladorDeLetrasJaDigitadas.registre(prl.getLetra());
+        }
+
+        else if (comunicado instanceof PedidoDeRevelacao pr) {
+          int posicao = pr.getPosicao();
+          char letra = pr.getLetra();
+
+          this.tracinhos.revele(posicao, letra);
+
+          this.jogador.receba(new ComunicadoDeRevelacao(this.tracinhos));
         }
 
         else if (comunicado instanceof PedidoParaSair ps) {
