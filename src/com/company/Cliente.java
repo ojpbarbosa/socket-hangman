@@ -89,7 +89,7 @@ public class Cliente {
     } catch (Exception erro) {
     }
 
-    System.out.println("\nSua partida está sendo iniciada!\n");
+    System.out.println("\nSua partida está sendo iniciada!");
 
     servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
 
