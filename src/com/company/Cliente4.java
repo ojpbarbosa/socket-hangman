@@ -163,6 +163,7 @@ public class Cliente4 {
 
                         if (palavra.compareTo(palavraAdivinhada) == 0) {
                             System.out.println("Parabens!!! Voce acertou a palavra e consequentemente GANHOU O JOGO!");
+
                             servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
                             jogando = false;
                         } else {
@@ -171,7 +172,12 @@ public class Cliente4 {
                             System.out.println("Adeus.......");
 
                             servidor.receba(new ComunicadoDeDerrotaPorErrarPalavra());
-                            jogando = false;
+                            try {
+                                servidor.receba(new PedidoParaSair());
+                            } catch (Exception erro) {
+                            }
+                            System.out.println("\nObrigado por jogar!");
+                            System.exit(0);
                         }
                     } else if (opcao.equals("L")) {
                         System.out.print("Qual letra ? ");
@@ -249,7 +255,15 @@ public class Cliente4 {
                 if (jogando)
                     System.out.println("\nOutro jogador ira jogar agora!");
 
-                servidor.receba(new ComunicadoDeFimDeTurno());
+                servidor.receba(new PedidoDeNumeroDeJogadores());
+                do {
+                    comunicado = servidor.espie();
+                } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
+                comunicado = servidor.envie();
+                int numeroDeJogadores = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores();
+
+                if (jogando || (numeroDeJogadores - 1) > 1)
+                    servidor.receba(new ComunicadoDeFimDeTurno());
             }
         } while (jogando);
 

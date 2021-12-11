@@ -172,7 +172,12 @@ public class Cliente3 {
               System.out.println("Adeus.......");
 
               servidor.receba(new ComunicadoDeDerrotaPorErrarPalavra());
-              jogando = false;
+              try {
+                servidor.receba(new PedidoParaSair());
+              } catch (Exception erro) {
+              }
+              System.out.println("\nObrigado por jogar!");
+              System.exit(0);
             }
           } else if (opcao.equals("L")) {
             System.out.print("Qual letra ? ");
