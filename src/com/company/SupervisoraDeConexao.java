@@ -164,6 +164,10 @@ public class SupervisoraDeConexao extends Thread {
           }
         }
 
+        else if (comunicado instanceof PedidoDeNumeroDeJogadores) {
+          this.jogador.receba(new ComunicadoDeNumeroDeJogadores(this.jogadores.size()));
+        }
+
         else if (comunicado instanceof PedidoParaSair) {
           synchronized (this.jogadores) {
             this.jogadores.remove(this.jogador);

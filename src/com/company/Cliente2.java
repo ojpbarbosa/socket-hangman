@@ -163,6 +163,7 @@ public class Cliente2 {
 
             if (palavra.compareTo(palavraAdivinhada) == 0) {
               System.out.println("Parabens!!! Voce acertou a palavra e consequentemente GANHOU O JOGO!");
+
               servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra());
               jogando = false;
             } else {
@@ -249,7 +250,15 @@ public class Cliente2 {
         if (jogando)
           System.out.println("\nOutro jogador ira jogar agora!");
 
-        servidor.receba(new ComunicadoDeFimDeTurno());
+        servidor.receba(new PedidoDeNumeroDeJogadores());
+        do {
+          comunicado = servidor.espie();
+        } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
+        comunicado = servidor.envie();
+        int numeroDeJogadores = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores();
+
+        if (jogando || (numeroDeJogadores - 1) > 1)
+          servidor.receba(new ComunicadoDeFimDeTurno());
       }
     } while (jogando);
 
