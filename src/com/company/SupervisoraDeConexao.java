@@ -75,9 +75,6 @@ public class SupervisoraDeConexao extends Thread {
               this.controladorDeErros,
               this.controladorDeLetrasJaDigitadas));
         }
-
-        else if (this.jogadores.size() > 3)
-          this.jogador.receba(new ComunicadoDeServidorCheio());
       }
 
       for (;;) {

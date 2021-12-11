@@ -72,20 +72,9 @@ public class Cliente {
       Comunicado comunicado = null;
       do {
         comunicado = (Comunicado) servidor.espie();
-      } while (!(comunicado instanceof ComunicadoDeInicio) &&
-              !(comunicado instanceof ComunicadoDeServidorCheio));
-
+      } while (!(comunicado instanceof ComunicadoDeInicio));
       comunicado = servidor.envie();
-
-      if (comunicado instanceof ComunicadoDeInicio)
-        dadosDaForca = (ComunicadoDeInicio) comunicado;
-
-      else {
-        System.err.println("\n:( O servidor esta cheio;");
-        System.out.println("volte para outro jogo!");
-        servidor.receba(new PedidoParaSair());
-        System.exit(0);
-      }
+      dadosDaForca = (ComunicadoDeInicio) comunicado;
     } catch (Exception erro) {
     }
 
