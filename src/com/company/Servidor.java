@@ -9,7 +9,7 @@ public class Servidor {
 
   public static void main(String[] args) {
     if (args.length > 1) {
-      System.err.println("Uso esperado: java Servidor [PORTA]\n");
+      System.err.println("Uso esperado: java Servidor [PORTA]");
       return;
     }
 
