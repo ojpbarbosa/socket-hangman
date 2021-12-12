@@ -1,94 +1,94 @@
 package com.company;
 
 public class ControladorDeLetrasJaDigitadas extends Comunicado implements Cloneable {
-    private String letrasJaDigitadas;
+  private String letrasJaDigitadas;
 
-    public ControladorDeLetrasJaDigitadas() {
-        this.letrasJaDigitadas = "";
+  public ControladorDeLetrasJaDigitadas() {
+    this.letrasJaDigitadas = "";
+  }
+
+  public boolean isJaDigitada(char letra) {
+    boolean possuiLetra = false;
+
+    for (int i = 0; i < this.letrasJaDigitadas.length(); i++) {
+      if (letrasJaDigitadas.charAt(i) == letra)
+        possuiLetra = true;
     }
 
-    public boolean isJaDigitada(char letra) {
-        boolean possuiLetra = false;
+    return possuiLetra;
+  }
 
-        for (int i = 0; i < this.letrasJaDigitadas.length(); i++) {
-            if (letrasJaDigitadas.charAt(i) == letra)
-                possuiLetra = true;
-        }
+  public void registre(char letra) throws Exception {
+    if (letra == ' ')
+      throw new Exception("Letra Ausente");
 
-        return possuiLetra;
+    if (this.isJaDigitada(letra))
+      throw new Exception("Letra já digitada");
+
+    this.letrasJaDigitadas += letra;
+  }
+
+  @Override
+  public String toString() {
+    String todasAsletras = "";
+
+    for (int i = 0; i < this.letrasJaDigitadas.length(); i++) {
+      // Condicional com o objetivo de não colocar "," depois da última letra
+      if (i != this.letrasJaDigitadas.length() - 1)
+        todasAsletras += Character.toString(this.letrasJaDigitadas.charAt(i)) + ", ";
+      else
+        todasAsletras += Character.toString(this.letrasJaDigitadas.charAt(i));
     }
 
-    public void registre(char letra) throws Exception {
-        if (letra == ' ')
-            throw new Exception("Letra Ausente");
+    return todasAsletras;
+  }
 
-        if (this.isJaDigitada(letra))
-            throw new Exception("Letra já digitada");
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
 
-        this.letrasJaDigitadas += letra;
-    }
+    if (obj == null)
+      return false;
 
-    @Override
-    public String toString() {
-        String todasAsletras = "";
+    if (obj.getClass() != ControladorDeLetrasJaDigitadas.class)
+      return false;
 
-        for (int i = 0; i < this.letrasJaDigitadas.length(); i++) {
-            // Condicional com o objetivo de não colocar "," depois da última letra
-            if (i != this.letrasJaDigitadas.length() - 1)
-                todasAsletras += Character.toString(this.letrasJaDigitadas.charAt(i)) + ", ";
-            else
-                todasAsletras += Character.toString(this.letrasJaDigitadas.charAt(i));
-        }
+    ControladorDeLetrasJaDigitadas cljd = (ControladorDeLetrasJaDigitadas) obj;
+    if (!this.letrasJaDigitadas.equals(cljd.letrasJaDigitadas))
+      return false;
 
-        return todasAsletras;
-    }
+    return true;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
+  @Override
+  public int hashCode() {
+    int ret = 666;
 
-        if (obj == null)
-            return false;
+    ret = 11 * ret + new String(this.letrasJaDigitadas).hashCode();
 
-        if (obj.getClass() != ControladorDeLetrasJaDigitadas.class)
-            return false;
+    if (ret < 0)
+      ret = -ret;
 
-        ControladorDeLetrasJaDigitadas cljd = (ControladorDeLetrasJaDigitadas) obj;
-        if (!this.letrasJaDigitadas.equals(cljd.letrasJaDigitadas))
-            return false;
+    return ret;
+  }
 
-        return true;
-    }
+  public ControladorDeLetrasJaDigitadas(ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas)
+      throws Exception {
+    if (controladorDeLetrasJaDigitadas == null)
+      throw new Exception("Controlador Ausente");
 
-    @Override
-    public int hashCode() {
-        int ret = 666;
+    this.letrasJaDigitadas = controladorDeLetrasJaDigitadas.letrasJaDigitadas;
+  }
 
-        ret = 11 * ret + new String(this.letrasJaDigitadas).hashCode();
+  @Override
+  public Object clone() {
+    ControladorDeLetrasJaDigitadas ret = null;
+    try {
+      ret = new ControladorDeLetrasJaDigitadas(this);
+    } catch (Exception erro) {
+    } // Não tratamos pois sabemos que não ocorrerá
 
-        if (ret < 0)
-            ret = -ret;
-
-        return ret;
-    }
-
-    public ControladorDeLetrasJaDigitadas(ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas)
-            throws Exception {
-        if (controladorDeLetrasJaDigitadas == null)
-            throw new Exception("Controlador Ausente");
-
-        this.letrasJaDigitadas = controladorDeLetrasJaDigitadas.letrasJaDigitadas;
-    }
-
-    @Override
-    public Object clone() {
-        ControladorDeLetrasJaDigitadas ret = null;
-        try {
-            ret = new ControladorDeLetrasJaDigitadas(this);
-        } catch (Exception erro) {
-        } // Não tratamos pois sabemos que não ocorrerá
-
-        return ret;
-    }
+    return ret;
+  }
 }

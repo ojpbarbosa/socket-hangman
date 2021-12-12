@@ -1,95 +1,95 @@
 package com.company;
 
 public class Palavra extends Comunicado implements Comparable<Palavra> {
-    private String texto;
+  private String texto;
 
-    public Palavra(String texto) throws Exception {
-        if (texto == null || texto == " ")
-            throw new Exception("Texto ausente");
+  public Palavra(String texto) throws Exception {
+    if (texto == null || texto == " ")
+      throw new Exception("Texto ausente");
 
-        this.texto = texto;
+    this.texto = texto;
+  }
+
+  public int getQuantidade(char letra) {
+    int qtdLetra = 0;
+
+    for (int i = 0; i < texto.length(); i++) {
+      if (texto.charAt(i) == letra)
+        qtdLetra++;
     }
 
-    public int getQuantidade(char letra) {
-        int qtdLetra = 0;
+    return qtdLetra;
+  }
 
-        for (int i = 0; i < texto.length(); i++) {
-            if (texto.charAt(i) == letra)
-                qtdLetra++;
+  public int getPosicaoDaIezimaOcorrencia(int i, char letra) throws Exception {
+    byte qtdAparicoes = 0;
+    boolean achou = false;
+    int posicao = -1;
+
+    for (int j = 0; j < this.texto.length(); j++) {
+      if (letra == texto.charAt(j)) {
+        qtdAparicoes++;
+
+        if (qtdAparicoes - 1 == i) { // Verifica se está na Iézima aparição da letra
+          posicao = j;
+          achou = true;
+          break;
         }
-
-        return qtdLetra;
+      }
     }
 
-    public int getPosicaoDaIezimaOcorrencia(int i, char letra) throws Exception {
-        byte qtdAparicoes = 0;
-        boolean achou = false;
-        int posicao = -1;
-
-        for (int j = 0; j < this.texto.length(); j++) {
-            if (letra == texto.charAt(j)) {
-                qtdAparicoes++;
-
-                if (qtdAparicoes - 1 == i) { // Verifica se está na Iézima aparição da letra
-                    posicao = j;
-                    achou = true;
-                    break;
-                }
-            }
-        }
-
-        if (!achou) {
-            throw new Exception("Iézima aparição não encontrada");
-        }
-
-        return posicao;
+    if (!achou) {
+      throw new Exception("Iézima aparição não encontrada");
     }
 
-    public int getTamanho() {
-        return this.texto.length();
-    }
+    return posicao;
+  }
 
-    @Override
-    public String toString() {
-        return this.texto;
-    }
+  public int getTamanho() {
+    return this.texto.length();
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
+  @Override
+  public String toString() {
+    return this.texto;
+  }
 
-        if (obj == null)
-            return false;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
 
-        if (obj.getClass() != Palavra.class)
-            return false;
+    if (obj == null)
+      return false;
 
-        Palavra palav = (Palavra) obj;
-        if (this.texto != palav.texto)
-            return false;
+    if (obj.getClass() != Palavra.class)
+      return false;
 
-        return true;
-    }
+    Palavra palav = (Palavra) obj;
+    if (this.texto != palav.texto)
+      return false;
 
-    @Override
-    public int hashCode() {
-        int ret = 666;
+    return true;
+  }
 
-        ret = 11 * ret + new String(this.texto).hashCode();
+  @Override
+  public int hashCode() {
+    int ret = 666;
 
-        if (ret < 0)
-            ret = -ret;
-        return ret;
-    }
+    ret = 11 * ret + new String(this.texto).hashCode();
 
-    @Override
-    public int compareTo(Palavra palavra) {
-        if (this.texto.compareTo(palavra.texto) < 0)
-            return -1;
-        if (this.texto.compareTo(palavra.texto) > 0)
-            return 1;
+    if (ret < 0)
+      ret = -ret;
+    return ret;
+  }
 
-        return 0;
-    }
+  @Override
+  public int compareTo(Palavra palavra) {
+    if (this.texto.compareTo(palavra.texto) < 0)
+      return -1;
+    if (this.texto.compareTo(palavra.texto) > 0)
+      return 1;
+
+    return 0;
+  }
 }

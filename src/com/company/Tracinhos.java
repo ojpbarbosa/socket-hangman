@@ -1,97 +1,97 @@
 package com.company;
 
 public class Tracinhos extends Comunicado implements Cloneable {
-    private char texto[];
+  private char texto[];
 
-    public Tracinhos(int qtd) throws Exception {
-        if (qtd <= 1)
-            throw new Exception("Quatidade de tracinhos invalida!");
+  public Tracinhos(int qtd) throws Exception {
+    if (qtd <= 1)
+      throw new Exception("Quatidade de tracinhos invalida!");
 
-        this.texto = new char[qtd];
+    this.texto = new char[qtd];
 
-        for (byte i = 0; i < qtd; i++)
-            this.texto[i] = '_';
+    for (byte i = 0; i < qtd; i++)
+      this.texto[i] = '_';
+  }
+
+  public void revele(int posicao, char letra) throws Exception {
+    if (posicao < 0 || posicao >= this.texto.length)
+      throw new Exception("Posicao para revelacao invalida!");
+
+    this.texto[posicao] = letra;
+  }
+
+  public boolean isAindaComTracinhos() {
+    boolean isThereTracinhos = false;
+
+    for (byte i = 0; i < (byte) this.texto.length; i++) {
+      if (this.texto[i] == '_') {
+        isThereTracinhos = true;
+        break;
+      }
     }
 
-    public void revele(int posicao, char letra) throws Exception {
-        if (posicao < 0 || posicao >= this.texto.length)
-            throw new Exception("Posicao para revelacao invalida!");
+    return isThereTracinhos;
+  }
 
-        this.texto[posicao] = letra;
-    }
+  @Override
+  public String toString() {
+    String caracteres = "";
+    for (byte i = 0; i < (byte) this.texto.length; i++)
+      caracteres += String.format("%c ", this.texto[i]);
 
-    public boolean isAindaComTracinhos() {
-        boolean isThereTracinhos = false;
+    return caracteres;
+  }
 
-        for (byte i = 0; i < (byte) this.texto.length; i++) {
-            if (this.texto[i] == '_') {
-                isThereTracinhos = true;
-                break;
-            }
-        }
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
 
-        return isThereTracinhos;
-    }
+    if (obj == null)
+      return false;
 
-    @Override
-    public String toString() {
-        String caracteres = "";
-        for (byte i = 0; i < (byte) this.texto.length; i++)
-            caracteres += String.format("%c ", this.texto[i]);
+    if (obj.getClass() != Tracinhos.class)
+      return false;
 
-        return caracteres;
-    }
+    Tracinhos trac = (Tracinhos) obj;
+    if (this.texto != trac.texto)
+      return false;
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
+    return true;
+  }
 
-        if (obj == null)
-            return false;
+  @Override
+  public int hashCode() {
+    int ret = 666;
 
-        if (obj.getClass() != Tracinhos.class)
-            return false;
+    ret = 11 * ret + new char[this.texto.length].hashCode();
 
-        Tracinhos trac = (Tracinhos) obj;
-        if (this.texto != trac.texto)
-            return false;
+    if (ret < 0)
+      ret = -ret;
 
-        return true;
-    }
+    return ret;
+  }
 
-    @Override
-    public int hashCode() {
-        int ret = 666;
+  // construtor de cópia
+  public Tracinhos(Tracinhos t) throws Exception {
+    if (t == null)
+      throw new Exception("Modelo ausente");
 
-        ret = 11 * ret + new char[this.texto.length].hashCode();
+    this.texto = new char[t.texto.length];
 
-        if (ret < 0)
-            ret = -ret;
+    for (short i = 0; i < t.texto.length; i++)
+      this.texto[i] = t.texto[i];
+  }
 
-        return ret;
-    }
+  @Override
+  public Object clone() {
+    Tracinhos ret = null;
 
-    // construtor de cópia
-    public Tracinhos(Tracinhos t) throws Exception {
-        if (t == null)
-            throw new Exception("Modelo ausente");
+    try {
+      ret = new Tracinhos(this);
+    } catch (Exception erro) {
+    } // ignorando Exception
 
-        this.texto = new char[t.texto.length];
-
-        for (short i = 0; i < t.texto.length; i++)
-            this.texto[i] = t.texto[i];
-    }
-
-    @Override
-    public Object clone() {
-        Tracinhos ret = null;
-
-        try {
-            ret = new Tracinhos(this);
-        } catch (Exception erro) {
-        } // ignorando Exception
-
-        return ret;
-    }
+    return ret;
+  }
 }
