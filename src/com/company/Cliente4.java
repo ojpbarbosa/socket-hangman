@@ -108,6 +108,7 @@ public class Cliente4 {
 
       else if (comunicado instanceof ComunicadoDeVitoriaPorNaoHaverMaisJogadores) {
         System.out.println("\nParabens!!! Voce eh o unico jogador restante e consequentemente GANHOU O JOGO!");
+        System.out.println("\nPara sua curiosidade, a palavra era " + dadosDaForca.getPalavra() + "!");
         jogando = false;
       }
 
@@ -145,11 +146,10 @@ public class Cliente4 {
         try {
           String opcao;
           do {
-            System.out.println(
-                    "Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [T]erminar o jogo?");
+            System.out.println("Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [S]air do jogo?");
             System.out.print("Escolha uma opcao: ");
             opcao = Teclado.getUmString().toUpperCase();
-          } while (!opcao.equals("P") && !opcao.equals("L") && !opcao.equals("T"));
+          } while (!opcao.equals("P") && !opcao.equals("L") && !opcao.equals("S"));
 
           if (opcao.equals("P")) {
             System.out.print("Qual é a palavra ? ");
