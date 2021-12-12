@@ -68,11 +68,11 @@ public class SupervisoraDeConexao extends Thread {
 
           for (Parceiro jogador : grupo)
             jogador.receba(new ComunicadoDeInicio(
-                    grupos.indexOf(grupo),
-                    this.palavra,
-                    this.tracinhos,
-                    this.controladorDeErros,
-                    this.controladorDeLetrasJaDigitadas));
+                grupos.indexOf(grupo),
+                this.palavra,
+                this.tracinhos,
+                this.controladorDeErros,
+                this.controladorDeLetrasJaDigitadas));
 
           grupo.get(0).receba(new ComunicadoDeSeuTurno(
               this.palavra,
@@ -117,17 +117,17 @@ public class SupervisoraDeConexao extends Thread {
 
             if (jogadorDaVez < grupo.size() - 1)
               grupo.get(jogadorDaVez + 1).receba(new ComunicadoDeSeuTurno(
-                      this.palavra,
-                      this.tracinhos,
-                      this.controladorDeErros,
-                      this.controladorDeLetrasJaDigitadas));
+                  this.palavra,
+                  this.tracinhos,
+                  this.controladorDeErros,
+                  this.controladorDeLetrasJaDigitadas));
 
             else
               grupo.get(0).receba(new ComunicadoDeSeuTurno(
-                      this.palavra,
-                      this.tracinhos,
-                      this.controladorDeErros,
-                      this.controladorDeLetrasJaDigitadas));
+                  this.palavra,
+                  this.tracinhos,
+                  this.controladorDeErros,
+                  this.controladorDeLetrasJaDigitadas));
           }
         }
 
@@ -182,7 +182,7 @@ public class SupervisoraDeConexao extends Thread {
 
         else if (comunicado instanceof PedidoParaSair ps) {
           ArrayList<Parceiro> grupo = grupos.get(ps.getGrupo());
-  
+
           synchronized (grupo) {
             grupo.remove(this.jogador);
 

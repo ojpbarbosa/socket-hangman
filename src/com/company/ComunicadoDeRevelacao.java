@@ -1,13 +1,13 @@
 package com.company;
 
 public class ComunicadoDeRevelacao extends Comunicado {
-    private Tracinhos tracinhos;
+  private Tracinhos tracinhos;
 
-    public ComunicadoDeRevelacao(Tracinhos tracinhos) {
-        this.tracinhos = tracinhos;
-    }
+  public ComunicadoDeRevelacao(Tracinhos tracinhos) {
+    this.tracinhos = tracinhos;
+  }
 
-    public Tracinhos getTracinhos() {
-        return this.tracinhos;
-    }
+  public Tracinhos getTracinhos() {
+    return this.tracinhos;
+  }
 }

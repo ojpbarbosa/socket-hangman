@@ -91,10 +91,10 @@ public class Cliente {
       do {
         comunicado = servidor.espie();
       } while (!(comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) &&
-              !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverMaisJogadores) &&
-              !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
-              !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
-              !(comunicado instanceof ComunicadoDeSeuTurno));
+          !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverMaisJogadores) &&
+          !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
+          !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
+          !(comunicado instanceof ComunicadoDeSeuTurno));
       comunicado = servidor.envie();
 
       if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
@@ -130,7 +130,8 @@ public class Cliente {
         Palavra palavra = dadosDaForca.getPalavra();
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
         ControladorDeErros controladorDeErros = dadosDaForca.getControladorDeErros();
-        ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
+        ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = dadosDaForca
+            .getControladorDeLetrasJaDigitadas();
 
         servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
 
@@ -141,7 +142,8 @@ public class Cliente {
         try {
           String opcao;
           do {
-            System.out.println("Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [T]erminar o jogo?");
+            System.out.println(
+                "Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [T]erminar o jogo?");
             System.out.print("Escolha uma opcao: ");
             opcao = Teclado.getUmString().toUpperCase();
           } while (!opcao.equals("P") && !opcao.equals("L") && !opcao.equals("T"));
@@ -172,7 +174,7 @@ public class Cliente {
               int numeroDeJogadores = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores();
 
               if ((numeroDeJogadores - 1) > 1)
-                  servidor.receba(new ComunicadoDeFimDeTurno(grupo));
+                servidor.receba(new ComunicadoDeFimDeTurno(grupo));
 
               else
                 servidor.receba(new ComunicadoDeDerrotaPorErrarPalavra(grupo));
@@ -245,7 +247,7 @@ public class Cliente {
                 if (!tracinhos.isAindaComTracinhos()) {
                   servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra(grupo));
                   System.out.println("Parabéns!!! Voce acertou a palavra, que era " + palavra
-                          + ", e consequentemente GANHOU O JOGO!");
+                      + ", e consequentemente GANHOU O JOGO!");
                   jogando = false;
                 }
               }
@@ -256,7 +258,6 @@ public class Cliente {
         }
         if (jogando)
           System.out.println("\nOutro jogador ira jogar agora!");
-
 
         try {
           servidor.receba(new PedidoDeNumeroDeJogadores(grupo));
