@@ -104,24 +104,8 @@ public class SupervisoraDeConexao extends Thread {
             for (Parceiro jogador : grupo)
               jogador.receba(new ComunicadoDeDerrotaPorErrarPalavra(cdep.getGrupo()));
 
-            // int jogadorDaVez = grupo.indexOf(jogador);
-
             if (grupo.size() == 1)
               grupo.get(0).receba(new ComunicadoDeVitoriaPorNaoHaverMaisJogadores());
-
-            /* else if (jogadorDaVez < grupo.size() - 1)
-              grupo.get(jogadorDaVez + 1).receba(new ComunicadoDeSeuTurno(
-                      this.palavra,
-                      this.tracinhos,
-                      this.controladorDeErros,
-                      this.controladorDeLetrasJaDigitadas));
-
-            else
-              grupo.get(0).receba(new ComunicadoDeSeuTurno(
-                      this.palavra,
-                      this.tracinhos,
-                      this.controladorDeErros,
-                      this.controladorDeLetrasJaDigitadas)); */
           }
         }
 
