@@ -97,7 +97,6 @@ public class Cliente {
           !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverMaisJogadores) &&
           !(comunicado instanceof ComunicadoDeSeuTurno)
       );
-
       comunicado = servidor.envie();
 
       if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
