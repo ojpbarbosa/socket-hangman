@@ -185,7 +185,7 @@ public class SupervisoraDeConexao extends Thread {
 
         else if (comunicado instanceof PedidoParaSair ps) {
           ArrayList<Parceiro> grupo = grupos.get(ps.getGrupo());
-
+  
           synchronized (grupo) {
             grupo.remove(this.jogador);
 
