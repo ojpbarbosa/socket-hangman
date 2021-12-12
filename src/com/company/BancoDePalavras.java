@@ -1,6 +1,6 @@
 package com.company;
 
-public class BancoDePalavras extends Comunicado {
+public class BancoDePalavras {
   private static String[] palavras = {
       "ADOLESCÊNCIA",
       "AMARELO",
