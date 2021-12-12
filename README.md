@@ -23,11 +23,8 @@ Um jogo da forca multiplayer em Java usando Socket.
 ## 🙋 Como usar
 
 ```
-# Clone esse repositório
+# Clone esse repositório e abra-o usando o IntelliJ
 $ git clone https://github.com/oJPBarbosa/socket-hangman.git
-
-# Entre na pasta do projeto
-$ cd socket-hangman
 ```
 
 ## :rocket: Tecnologias
