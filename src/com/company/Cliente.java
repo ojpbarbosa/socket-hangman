@@ -141,9 +141,7 @@ public class Cliente {
         try {
           String opcao;
           do {
-            System.out
-                    .println(
-                            "Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [T]erminar o jogo?");
+            System.out.println("Sua vez de jogar, o que deseja fazer: adivinhar a [P]alavra do jogo, adivinhar uma [L]etra ou [T]erminar o jogo?");
             System.out.print("Escolha uma opcao: ");
             opcao = Teclado.getUmString().toUpperCase();
           } while (!opcao.equals("P") && !opcao.equals("L") && !opcao.equals("T"));
@@ -162,11 +160,24 @@ public class Cliente {
               System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
               System.out.println("Adeus.......");
 
-              servidor.receba(new ComunicadoDeDerrotaPorErrarPalavra(grupo));
               try {
-                servidor.receba(new PedidoParaSair(grupo));
+                comunicado = null;
+                servidor.receba(new PedidoDeNumeroDeJogadores(grupo));
+                do {
+                  comunicado = servidor.espie();
+                } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
+                comunicado = servidor.envie();
               } catch (Exception erro) {
               }
+              int numeroDeJogadores = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores();
+
+              if ((numeroDeJogadores - 1) > 1)
+                  servidor.receba(new ComunicadoDeFimDeTurno(grupo));
+
+              else
+                servidor.receba(new ComunicadoDeDerrotaPorErrarPalavra(grupo));
+
+              servidor.receba(new PedidoParaSair(grupo));
               System.out.println("\nObrigado por jogar!");
               System.exit(0);
             }
@@ -246,11 +257,15 @@ public class Cliente {
         if (jogando)
           System.out.println("\nOutro jogador ira jogar agora!");
 
-        servidor.receba(new PedidoDeNumeroDeJogadores(grupo));
-        do {
-          comunicado = servidor.espie();
-        } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
-        comunicado = servidor.envie();
+
+        try {
+          servidor.receba(new PedidoDeNumeroDeJogadores(grupo));
+          do {
+            comunicado = servidor.espie();
+          } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
+          comunicado = servidor.envie();
+        } catch (Exception erro) {
+        }
         int numeroDeJogadores = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores();
 
         if (jogando || (numeroDeJogadores - 1) > 1)
