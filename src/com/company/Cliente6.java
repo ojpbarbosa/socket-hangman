@@ -65,10 +65,11 @@ public class Cliente6 {
     } // sei que servidor foi instanciado
     tratadoraDeComunicadoDeDesligamento.start();
 
+    System.out.println("\nConectado!\n");
+    System.out.println("Aguardando outros 2 adversários...");
+
     ComunicadoDeInicio dadosDaForca = null;
     try {
-      System.out.println("\nConectado!\n");
-      System.out.println("Aguardando outros 2 adversários...");
       Comunicado comunicado = null;
       do {
         comunicado = (Comunicado) servidor.espie();
@@ -77,13 +78,11 @@ public class Cliente6 {
       dadosDaForca = (ComunicadoDeInicio) comunicado;
     } catch (Exception erro) {
     }
-
-    int grupo = dadosDaForca.getGrupo();
-
     System.out.println("\nSua partida está sendo iniciada!");
 
     servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
 
+    int grupo = dadosDaForca.getGrupo();
     boolean jogando = true;
     Comunicado comunicado = null;
     do {
@@ -133,8 +132,7 @@ public class Cliente6 {
         Palavra palavra = dadosDaForca.getPalavra();
         Tracinhos tracinhos = dadosDaForca.getTracinhos();
         ControladorDeErros controladorDeErros = dadosDaForca.getControladorDeErros();
-        ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = dadosDaForca
-                .getControladorDeLetrasJaDigitadas();
+        ControladorDeLetrasJaDigitadas controladorDeLetrasJaDigitadas = dadosDaForca.getControladorDeLetrasJaDigitadas();
 
         servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
 
@@ -152,30 +150,28 @@ public class Cliente6 {
 
           if (opcao.equals("P")) {
             System.out.print("Qual é a palavra ? ");
-            Palavra palavraAdivinhada = new Palavra(Teclado.getUmString().toUpperCase());
+            Palavra chute = new Palavra(Teclado.getUmString().toUpperCase());
 
-            if (palavra.compareTo(palavraAdivinhada) == 0) {
+            if (palavra.compareTo(chute) == 0) {
               System.out.println("Parabens!!! Voce acertou a palavra e consequentemente GANHOU O JOGO!");
 
               servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra(grupo));
               jogando = false;
-            } else {
+            }
+
+            else {
               System.out.println("Que pena, voce errou a palavra\n");
               System.out.println("Isso quer dizer que infelizmente sua partida acaba aqui :(");
               System.out.println("Adeus.......");
 
-              try {
-                comunicado = null;
-                servidor.receba(new PedidoDeNumeroDeJogadores(grupo));
-                do {
-                  comunicado = servidor.espie();
-                } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
-                comunicado = servidor.envie();
-              } catch (Exception erro) {
-              }
-              int numeroDeJogadores = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores();
+              servidor.receba(new PedidoDeNumeroDeJogadores(grupo));
+              do {
+                comunicado = servidor.espie();
+              } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
+              comunicado = servidor.envie();
+              int numeroDeJogadoresRemanescentes = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores() - 1;
 
-              if ((numeroDeJogadores - 1) > 1)
+              if (numeroDeJogadoresRemanescentes > 1)
                 servidor.receba(new ComunicadoDeFimDeTurno(grupo));
 
               else
@@ -185,24 +181,23 @@ public class Cliente6 {
               System.out.println("\nObrigado por jogar!");
               System.exit(0);
             }
-          } else if (opcao.equals("L")) {
+          }
+
+          else if (opcao.equals("L")) {
             System.out.print("Qual letra ? ");
-            char letra = Character.toUpperCase(Teclado.getUmChar());
+            char letra = Character.toUpperCase(Teclado.getUmString().charAt(0));
 
             // verifica se uma letra já foi digitada
-            boolean isJaDigitada = false;
-            try {
-              servidor.receba(new ComunicadoDeLetraJaDigitada(letra));
-              do {
-                comunicado = (Comunicado) servidor.espie();
-              } while (!(comunicado instanceof ComunicadoDeLetraJaDigitada));
-              comunicado = servidor.envie();
-              isJaDigitada = ((ComunicadoDeLetraJaDigitada) comunicado).getIsJaDigitada();
-            } catch (Exception erro) {
-            }
+            servidor.receba(new ComunicadoDeLetraJaDigitada(letra));
+            do {
+              comunicado = (Comunicado) servidor.espie();
+            } while (!(comunicado instanceof ComunicadoDeLetraJaDigitada));
+            comunicado = servidor.envie();
+            boolean isJaDigitada = ((ComunicadoDeLetraJaDigitada) comunicado).getIsJaDigitada();
 
             if (isJaDigitada)
               System.err.println("Essa letra ja foi digitada!\n");
+
             else {
               servidor.receba(new PedidoDeRegistroDeLetra(letra));
 
@@ -229,7 +224,9 @@ public class Cliente6 {
                   servidor.receba(new ComunicadoDeDerrotaPorAtingirMaximoDeErros(grupo));
                   jogando = false;
                 }
-              } else {
+              }
+
+              else {
                 System.out.println("\nA palavra tem a letra '" + letra + "'!");
 
                 ComunicadoDeRevelacao comunicadoDeRevelacao = null;
@@ -254,24 +251,23 @@ public class Cliente6 {
                 }
               }
             }
-          } else
+          }
+
+          else
             jogando = false;
         } catch (Exception erro) {
         }
         if (jogando)
           System.out.println("\nOutro jogador ira jogar agora!");
 
-        try {
-          servidor.receba(new PedidoDeNumeroDeJogadores(grupo));
-          do {
-            comunicado = servidor.espie();
-          } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
-          comunicado = servidor.envie();
-        } catch (Exception erro) {
-        }
-        int numeroDeJogadores = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores();
+        servidor.receba(new PedidoDeNumeroDeJogadores(grupo));
+        do {
+          comunicado = servidor.espie();
+        } while (!(comunicado instanceof ComunicadoDeNumeroDeJogadores));
+        comunicado = servidor.envie();
+        int numeroDeJogadoresRemanescentes = ((ComunicadoDeNumeroDeJogadores) comunicado).getNumeroDeJogadores() - 1;
 
-        if (jogando || (numeroDeJogadores - 1) > 1)
+        if (jogando || numeroDeJogadoresRemanescentes > 1)
           servidor.receba(new ComunicadoDeFimDeTurno(grupo));
       }
     } while (jogando);
@@ -280,7 +276,6 @@ public class Cliente6 {
       servidor.receba(new PedidoParaSair(grupo));
     } catch (Exception erro) {
     }
-
     System.out.println("\nObrigado por jogar!");
     System.exit(0);
   }
