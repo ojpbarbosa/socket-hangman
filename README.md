@@ -1,5 +1,5 @@
 <p align="center">
-  <img alt="Socket Hangman" src="" />
+  <img alt="Socket Hangman" src="https://user-images.githubusercontent.com/79005271/145720802-8d1892cb-0176-4114-a9ff-9eb892bae281.gif" />
 </p>
 
 <p align="center">
@@ -14,7 +14,11 @@
 
 ## 🎯 Sobre
 
-Um jogo da forca multiplayer em Java usando socket.
+Um jogo da forca multiplayer em Java usando Socket.
+
+<p align="center">
+    <img alt="Socket Hangman Demo" src="https://user-images.githubusercontent.com/79005271/145721660-fd768fc8-2a1a-4ecf-bc89-96f7a7cc2997.png">
+</p>
 
 ## 🙋 Como usar
 
