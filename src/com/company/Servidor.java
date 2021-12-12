@@ -1,6 +1,7 @@
 package com.company;
 
 import java.io.*;
+import java.net.*;
 import java.util.*;
 
 public class Servidor {
@@ -30,6 +31,10 @@ public class Servidor {
 
     System.out.println("\nO servidor esta ativo! Para desativa-lo,");
     System.out.println("use o comando \"desativar\".");
+    try {
+      System.out.println("\nIP: " + InetAddress.getLocalHost().getHostAddress());
+    } catch (Exception erro) {
+    }
 
     for (;;) {
       System.out.print("\n> ");
