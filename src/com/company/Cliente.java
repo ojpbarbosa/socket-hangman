@@ -90,11 +90,14 @@ public class Cliente {
       comunicado = null;
       do {
         comunicado = servidor.espie();
-      } while (!(comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) &&
-          !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverMaisJogadores) &&
+      } while (
           !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
           !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
-          !(comunicado instanceof ComunicadoDeSeuTurno));
+          !(comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) &&
+          !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverMaisJogadores) &&
+          !(comunicado instanceof ComunicadoDeSeuTurno)
+      );
+
       comunicado = servidor.envie();
 
       if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
