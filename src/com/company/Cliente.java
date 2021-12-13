@@ -66,7 +66,7 @@ public class Cliente {
     tratadoraDeComunicadoDeDesligamento.start();
 
     System.out.println("\nConectado!\n");
-    System.out.println("Aguardando outros 2 adversários...");
+    System.out.println("Aguardando outros 2 adversarios...");
 
     ComunicadoDeInicio dadosDaForca = null;
     try {
@@ -78,7 +78,7 @@ public class Cliente {
       dadosDaForca = (ComunicadoDeInicio) comunicado;
     } catch (Exception erro) {
     }
-    System.out.println("\nSua partida está sendo iniciada!");
+    System.out.println("\nSua partida esta sendo iniciada!");
 
     servidor.receba(new PedidoDeAtualizarDados(dadosDaForca));
 
@@ -89,13 +89,11 @@ public class Cliente {
       comunicado = null;
       do {
         comunicado = servidor.espie();
-      } while (
-          !(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
+      } while (!(comunicado instanceof ComunicadoDeDerrotaPorAtingirMaximoDeErros) &&
           !(comunicado instanceof ComunicadoDeDerrotaPorErrarPalavra) &&
           !(comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) &&
           !(comunicado instanceof ComunicadoDeVitoriaPorNaoHaverMaisJogadores) &&
-          !(comunicado instanceof ComunicadoDeSeuTurno)
-      );
+          !(comunicado instanceof ComunicadoDeSeuTurno));
       comunicado = servidor.envie();
 
       if (comunicado instanceof ComunicadoDeVitoriaPorAcertarPalavra) {
@@ -187,7 +185,7 @@ public class Cliente {
             System.out.print("Qual letra ? ");
             char letra = Character.toUpperCase(Teclado.getUmString().charAt(0));
 
-            // verifica se uma letra já foi digitada
+            // verifica se uma letra ja foi digitada
             servidor.receba(new ComunicadoDeLetraJaDigitada(letra));
             do {
               comunicado = (Comunicado) servidor.espie();
@@ -245,8 +243,7 @@ public class Cliente {
                 tracinhos = comunicadoDeRevelacao.getTracinhos();
                 if (!tracinhos.isAindaComTracinhos()) {
                   servidor.receba(new ComunicadoDeVitoriaPorAcertarPalavra(grupo));
-                  System.out.println("Parabéns!!! Voce acertou a palavra, que era " + palavra
-                      + ", e consequentemente GANHOU O JOGO!");
+                  System.out.println("Parabéns!!! Voce acertou a palavra, que era " + palavra + ", e consequentemente GANHOU O JOGO!");
                   jogando = false;
                 }
               }
