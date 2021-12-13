@@ -14,7 +14,7 @@
 
 ## 🎯 Sobre
 
-Um jogo da forca multiplayer em Java usando Socket.
+Jogo da forca multiplayer em Java usando sockets.
 
 <p align="center">
     <img alt="Socket Hangman Demo" src="https://user-images.githubusercontent.com/79005271/145721660-fd768fc8-2a1a-4ecf-bc89-96f7a7cc2997.png">
