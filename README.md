@@ -12,29 +12,29 @@
   <img alt="GitHub" src="https://img.shields.io/github/license/oJPBarbosa/socket-hangman.svg">
 </p>
 
-## 🎯 Sobre
+## 🎯 Description
 
-Jogo da forca multiplayer em Java usando sockets.
+A Java sockets made hangman game.
 
 <p align="center">
     <img alt="Socket Hangman Demo" src="https://user-images.githubusercontent.com/79005271/145721660-fd768fc8-2a1a-4ecf-bc89-96f7a7cc2997.png">
 </p>
 
-## 🙋 Como usar
+## 🙋 How to use
 
 ```
-# Clone esse repositório e abra-o usando o IntelliJ
+# Clone this repository and open it using IntelliJ
 $ git clone https://github.com/oJPBarbosa/socket-hangman.git
 ```
 
-## :rocket: Tecnologias
+## :rocket: Technologies
 
 - [Java](https://www.java.com/)
 
-## ✍️ Autores
+## ✍️ Authors
 
-Um projeto idealizado e construído por [Felipe Stolze Vazquez](https://github.com/Vazqual), [Gabriel Willian Bartmanovicz](https://github.com/obielwb), [João Pedro Ferreira Barbosa](https://github.com/oJPBarbosa) e [Karen Ruas](https://github.com/annRuas).
+A project made by [Felipe Stolze Vazquez](https://github.com/Vazqual), [Gabriel Willian Bartmanovicz](https://github.com/obielwb), [João Pedro Ferreira Barbosa](https://github.com/oJPBarbosa) and [Karen Ruas](https://github.com/annRuas).
 
-## 🌎 Licença
+## 🌎 License
 
-Esse projeto está sobre licença MIT. Veja [LICENSE](https://github.com/oJPBarbosa/socket-hangman/blob/main/LICENSE) para mais inforamções.
+This project is under MIT license. Check [LICENSE](https://github.com/oJPBarbosa/socket-hangman/blob/main/LICENSE) for more information.
